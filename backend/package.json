@@ -24,6 +24,7 @@
     "@google/genai": "^1.16.0",
     "archiver": "^7.0.1",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.7.0",
     "coa": "^2.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 
 const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
   const [selectedVariation, setSelectedVariation] = useState(0);
   const [selectedPlatform, setSelectedPlatform] = useState('facebook');
   const [editingContent, setEditingContent] = useState({});
+
+  const variations = generatedPosts.variations;
+  const currentVariation = variations[selectedVariation];
+  const currentPlatformData = currentVariation?.platforms[selectedPlatform];
+
+  useEffect(() => {
+    initializeEditingContent();
+  }, [selectedVariation, currentVariation]);
 
   if (!generatedPosts || !generatedPosts.variations) {
     return (
@@ -18,10 +26,6 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
       </div>
     );
   }
-
-  const variations = generatedPosts.variations;
-  const currentVariation = variations[selectedVariation];
-  const currentPlatformData = currentVariation?.platforms[selectedPlatform];
 
   // Platform guidelines
   const platformGuidelines = {
@@ -43,10 +47,6 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
       }));
     }
   };
-
-  React.useEffect(() => {
-    initializeEditingContent();
-  }, [selectedVariation, selectedPlatform]);
 
   const handleContentChange = (field, value) => {
     setEditingContent((prev) => ({
@@ -85,8 +85,8 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
 
   const renderPlatformPreview = () => {
     const content = getCurrentContent();
+    console.log({ uel: content.media.images[0]?.url });
     const guidelines = platformGuidelines[selectedPlatform];
-    console.log({ currentVariation });
     switch (selectedPlatform) {
       case 'facebook':
         return (
@@ -118,10 +118,10 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
               </div>
             </div>
 
-            {currentVariation.media?.images && (
+            {content.media.images && (
               <div className="mb-3">
                 <img
-                  src={currentVariation.media.images[0]?.filepath}
+                  src={content.media.images[0]?.url}
                   alt="Generated content"
                   className="w-full rounded"
                 />
@@ -168,11 +168,10 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
               <div className="w-1 h-1 bg-gray-400 rounded-full mt-1"></div>
             </div>
 
-            {console.log({ currentVariation })}
-            {currentVariation.media?.images && (
+            {content.media.images && (
               <div className="mb-3">
                 <img
-                  src={currentVariation.media.images[0]?.filepath}
+                  src={content.media.images[0]?.url}
                   alt="Generated content"
                   className="w-full"
                 />
@@ -264,10 +263,10 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
               </div>
             </div>
 
-            {currentVariation.media?.images && (
+            {content.media.images && (
               <div className="mb-3">
                 <img
-                  src={currentVariation.media.images[0]?.filepath}
+                  src={content.media.images[0]?.url}
                   alt="Generated content"
                   className="w-full rounded"
                 />
@@ -335,10 +334,10 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
               </div>
             </div>
 
-            {currentVariation.media?.images && (
+            {content.media.images && (
               <div className="mb-3 rounded-lg overflow-hidden">
                 <img
-                  src={currentVariation.media.images[0]?.filepath}
+                  src={content.media.images[0]?.url}
                   alt="Generated content"
                   className="w-full"
                 />
@@ -369,12 +368,10 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
                 </div>
               </div>
 
-              {currentVariation.media?.images && (
+              {content.media.images && (
                 <div className="mb-3">
                   <img
-                    src={
-                      '/Users/prathambarot/Desktop/other/PostCraft/backend/uploads/media1_1.png'
-                    }
+                    src={content.media.images[0]?.url}
                     alt="Generated content"
                     className="w-full rounded"
                   />

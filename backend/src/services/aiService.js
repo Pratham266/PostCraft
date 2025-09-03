@@ -1,6 +1,8 @@
 const { GoogleGenAI } = require('@google/genai');
 const fs = require('fs');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+const { uploadFile } = require('./uploadFile');
 
 class AIService {
   constructor() {
@@ -174,16 +176,18 @@ Return the response as a JSON object with this structure:
           for (const generatedImage of response.generatedImages) {
             let imgBytes = generatedImage.image.imageBytes;
             const buffer = Buffer.from(imgBytes, 'base64');
-            const filename = `media${i + 1}_${idx}.png`;
-            const filepath = path.join(uploadsDir, filename);
-            fs.writeFileSync(filepath, buffer);
+            const imageId = uuidv4();
+            const filename = `image_${imageId}.png`;
+
+            // Upload to Google Drive instead of saving locally
+            const link = await uploadFile(buffer, filename);
 
             variationImages.push({
               filename,
-              filepath,
-              url: `/uploads/${filename}`,
+              url: link, // Google Drive link
               isPlaceholder: false,
             });
+
             idx++;
           }
 
@@ -332,15 +336,21 @@ Return the response as a JSON object with this structure:
 
       // Combine text and media content
       console.log('Step 3/3: Combining content...');
+      console.dir({ result: textContent.variations }, { depth: null });
       const results = textContent.variations.map((variation, index) => {
         const media = mediaContent[index] || {};
 
+        // Add media object to each platform
+        const platformsData = Object.fromEntries(
+          Object.entries(variation.platforms).map(([platform, data]) => [
+            platform,
+            { ...data, media },
+          ])
+        );
         return {
           id: variation.id,
           postType,
-          platforms: variation.platforms,
-          media: media,
-          previews: this.generatePreviews(variation.platforms, media, postType),
+          platforms: platformsData,
         };
       });
 
@@ -366,60 +376,6 @@ Return the response as a JSON object with this structure:
         error: error.message,
       };
     }
-  }
-
-  // Generate platform previews
-  generatePreviews(platforms, media, postType) {
-    const previews = {};
-
-    Object.keys(platforms).forEach((platform) => {
-      const platformData = platforms[platform];
-      previews[platform] = {
-        caption: platformData.caption,
-        hashtags: platformData.hashtags,
-        cta: platformData.cta,
-        characterCount: platformData.characterCount,
-        media: media,
-        postType: postType,
-        preview: this.createPreviewHTML(
-          platform,
-          platformData,
-          media,
-          postType
-        ),
-      };
-    });
-
-    return previews;
-  }
-
-  // Create HTML preview for each platform
-  createPreviewHTML(platform, content, media, postType) {
-    const platformStyles = {
-      facebook: 'bg-blue-50 border-blue-200',
-      instagram:
-        'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200',
-      linkedin: 'bg-blue-50 border-blue-300',
-      twitter: 'bg-gray-50 border-gray-200',
-      whatsapp: 'bg-green-50 border-green-200',
-    };
-
-    return `
-      <div class="platform-preview ${platformStyles[platform]} border rounded-lg p-4 max-w-sm">
-        <div class="platform-header flex items-center space-x-2 mb-3">
-          <div class="w-6 h-6 bg-${platform === 'instagram' ? 'gradient-to-br from-purple-500 to-pink-500' : platform === 'facebook' ? 'blue-600' : platform === 'linkedin' ? 'blue-700' : platform === 'twitter' ? 'black' : 'green-500'} rounded"></div>
-          <span class="font-semibold text-sm">${platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
-        </div>
-        <div class="content">
-          ${media && media.images ? media.images.map((img) => `<img src="${img.url}" class="w-full rounded mb-2" alt="Generated content">`).join('') : ''}
-          ${media && media.video ? `<video src="${media.video.url}" class="w-full rounded mb-2" controls></video>` : ''}
-          <p class="text-sm mb-2">${content.caption}</p>
-          <div class="hashtags text-xs text-blue-600 mb-2">${content.hashtags.join(' ')}</div>
-          <div class="cta text-xs font-medium text-gray-600">${content.cta}</div>
-          <div class="character-count text-xs text-gray-400 mt-1">${content.characterCount} characters</div>
-        </div>
-      </div>
-    `;
   }
 }
 
