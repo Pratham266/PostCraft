@@ -1,29 +1,33 @@
 const { v2: cloudinary } = require('cloudinary');
+const path = require('path');
 
 // Configure Cloudinary
 cloudinary.config({
-  cloud_name: 'dsmk1zmjv',
-  api_key: '388754587969739',
-  api_secret: 'W59KNQSH8e8kyVcJosSKi5shemo',
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-async function uploadFile(file, filename = '') {
+async function uploadFile(file, filename = '', type = 'auto') {
   try {
     let uploadSource;
 
     if (Buffer.isBuffer(file)) {
-      // Convert Buffer → base64 Data URI
+      // Convert Buffer → base64 Data URI (image/video)
       const base64Str = file.toString('base64');
-      uploadSource = `data:image/png;base64,${base64Str}`;
+      uploadSource =
+        type === 'video'
+          ? `data:video/mp4;base64,${base64Str}`
+          : `data:image/png;base64,${base64Str}`;
     } else {
-      // If it's a file path or remote URL, upload directly
-      uploadSource = file;
+      // file is already a local path (string)
+      uploadSource = path.resolve(file);
     }
 
     const result = await cloudinary.uploader.upload(uploadSource, {
       folder: 'AiPostCraft',
-      public_id: filename ? filename.replace(/\.[^/.]+$/, '') : undefined, // remove file extension if present
-      resource_type: 'auto',
+      public_id: filename ? filename.replace(/\.[^/.]+$/, '') : undefined,
+      resource_type: type, // "video" when uploading video files
     });
 
     console.log('✅ File uploaded successfully!');

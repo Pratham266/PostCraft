@@ -1,14 +1,525 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 
+const CarouselGeneratedPosts = {
+  variations: [
+    {
+      id: 1,
+      postType: 'carousel',
+      platforms: {
+        facebook: {
+          caption:
+            "Exciting news, community! 🚀 Ready to future-proof your marketing strategy? Join our FREE webinar on the latest Digital Marketing Trends and gain the edge you need to succeed. We'll cover everything from AI in marketing to the newest social media algorithms. Don't miss out on these actionable insights!",
+          hashtags: [
+            '#DigitalMarketing',
+            '#Webinar',
+            '#FreeLearning',
+            '#MarketingTrends',
+            '#BusinessGrowth',
+            '#OnlineMarketing',
+            '#SmallBusinessTips',
+            '#StayAhead',
+            '#LearnWithUs',
+            '#MarketingStrategy',
+          ],
+          cta: "Click 'Learn More' to secure your spot now!",
+          characterCount: 380,
+          media: {
+            variationId: 1,
+            images: [
+              {
+                filename: 'image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903129/AiPostCraft/image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903133/AiPostCraft/image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+        instagram: {
+          caption:
+            'Unlock the future of digital marketing! 💡 Our FREE webinar on emerging trends is designed to give you the edge you need. Discover cutting-edge strategies and transform your online presence. Get ready to innovate! 🚀',
+          hashtags: [
+            '#DigitalMarketingTrends',
+            '#MarketingStrategy',
+            '#WebinarAlert',
+            '#FreeWebinar',
+            '#MarketingTips',
+            '#BusinessGrowth',
+            '#OnlineSuccess',
+            '#InstaMarketing',
+            '#FutureOfMarketing',
+            '#DigitalStrategy',
+            '#LearnAndGrow',
+            '#MarketingUpdate',
+            '#DontMissOut',
+            '#Innovation',
+            '#TechTrends',
+            '#SuccessMindset',
+            '#OnlineBusiness',
+            '#GrowthHacking',
+            '#MarketingCommunity',
+            '#EduWebinar',
+          ],
+          cta: 'Link in bio to register for free!',
+          characterCount: 280,
+          media: {
+            variationId: 1,
+            images: [
+              {
+                filename: 'image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903129/AiPostCraft/image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903133/AiPostCraft/image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+        linkedin: {
+          caption:
+            "Elevate your digital marketing expertise. We're hosting a complimentary webinar focused on the most impactful Digital Marketing Trends shaping the industry today. Gain strategic insights to optimize your campaigns and drive measurable results. Ideal for marketing professionals, business leaders, and entrepreneurs looking to stay ahead in a dynamic landscape.",
+          hashtags: [
+            '#DigitalMarketing',
+            '#MarketingTrends',
+            '#Webinar',
+            '#ProfessionalDevelopment',
+            '#BusinessStrategy',
+          ],
+          cta: 'Register for your free seat today!',
+          characterCount: 395,
+          media: {
+            variationId: 1,
+            images: [
+              {
+                filename: 'image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903129/AiPostCraft/image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903133/AiPostCraft/image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+        twitter: {
+          caption:
+            "Unlock the future of marketing! 🚀 Join our FREE webinar on Digital Marketing Trends. Learn what's next for AI, social media, and SEO. Don't get left behind! #DigitalMarketing #Webinar #MarketingTips #Free",
+          hashtags: [
+            '#DigitalMarketing',
+            '#Webinar',
+            '#MarketingTips',
+            '#Free',
+          ],
+          cta: 'Grab your free spot!',
+          characterCount: 210,
+          media: {
+            variationId: 1,
+            images: [
+              {
+                filename: 'image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903129/AiPostCraft/image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903133/AiPostCraft/image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+        whatsapp: {
+          caption:
+            "Hey there! 👋 Don't miss out on our FREE Digital Marketing Trends webinar! Learn the latest strategies to boost your business and stay competitive. Limited spots! 📈",
+          hashtags: ['#DigitalMarketing', '#FreeWebinar', '#MarketingTips'],
+          cta: 'Register here: [Link]',
+          characterCount: 195,
+          media: {
+            variationId: 1,
+            images: [
+              {
+                filename: 'image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903129/AiPostCraft/image_27b3aea4-2d6d-48ac-b3f5-1ab7b7fca609.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_7c35273c-b7fe-486e-b4ad-df9dcbc37316.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903131/AiPostCraft/image_b0382d3b-36d1-499c-bde0-2604b1ee0607.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903133/AiPostCraft/image_23b5790d-a925-460f-94c4-146ea6877aa6.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+      },
+    },
+    {
+      id: 2,
+      postType: 'carousel',
+      platforms: {
+        facebook: {
+          caption:
+            "Calling all marketers & business owners! 📢 Want to truly master the latest digital marketing trends? Our FREE webinar is packed with expert insights, practical tips, and a Q&A session to answer your burning questions. Let's grow together and dominate the digital space!",
+          hashtags: [
+            '#DigitalMarketingMastery',
+            '#FreeWebinar',
+            '#MarketingInsights',
+            '#BusinessSuccess',
+            '#LearnFromExperts',
+            '#OnlineStrategy',
+            '#CommunityLearning',
+            '#MarketingEducation',
+            '#FutureProof',
+            '#ExpertTips',
+          ],
+          cta: 'RSVP now and invite a friend!',
+          characterCount: 350,
+          media: {
+            variationId: 2,
+            images: [
+              {
+                filename: 'image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903156/AiPostCraft/image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903157/AiPostCraft/image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903158/AiPostCraft/image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903159/AiPostCraft/image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+        instagram: {
+          caption:
+            'Transform your marketing game! ✨ Dive deep into cutting-edge digital marketing trends with our FREE expert webinar. Get ready to innovate, strategize, and achieve unparalleled success online. This is your chance to gain a competitive edge! 🚀',
+          hashtags: [
+            '#DigitalMarketingExpert',
+            '#MarketingInnovation',
+            '#FreeWebinar',
+            '#BusinessGrowth',
+            '#OnlineMarketingTips',
+            '#StrategySession',
+            '#LearnWithUs',
+            '#InstaBusiness',
+            '#MarketingGoals',
+            '#DigitalTrends2024',
+            '#UnlockPotential',
+            '#MarketingJourney',
+            '#SuccessMindset',
+            '#Trendsetter',
+            '#KnowledgeIsPower',
+            '#MasterClass',
+            '#MarketingStrategy',
+            '#OnlineSuccess',
+            '#FutureReady',
+            '#DigitalSkills',
+          ],
+          cta: 'Tap the link in bio to secure your spot!',
+          characterCount: 320,
+          media: {
+            variationId: 2,
+            images: [
+              {
+                filename: 'image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903156/AiPostCraft/image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903157/AiPostCraft/image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903158/AiPostCraft/image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903159/AiPostCraft/image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+        linkedin: {
+          caption:
+            'Gain a competitive edge in the evolving digital landscape. Our upcoming complimentary webinar will dissect the most impactful digital marketing trends, offering a deep dive into advanced strategies and their practical application. Join industry experts for actionable insights that will refine your approach and boost your professional trajectory.',
+          hashtags: [
+            '#DigitalMarketing',
+            '#MarketingStrategy',
+            '#WebinarSeries',
+            '#IndustryInsights',
+            '#ProfessionalGrowth',
+          ],
+          cta: 'Secure your complimentary registration.',
+          characterCount: 390,
+          media: {
+            variationId: 2,
+            images: [
+              {
+                filename: 'image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903156/AiPostCraft/image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903157/AiPostCraft/image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903158/AiPostCraft/image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903159/AiPostCraft/image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+        twitter: {
+          caption:
+            'Unlock expert insights! 📈 Join our FREE webinar on top Digital Marketing Trends. Elevate your strategy with practical tips from industry leaders. #DigitalMarketing #Webinar #ExpertTips #Free',
+          hashtags: ['#DigitalMarketing', '#Webinar', '#ExpertTips', '#Free'],
+          cta: 'Enroll for free today!',
+          characterCount: 220,
+          media: {
+            variationId: 2,
+            images: [
+              {
+                filename: 'image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903156/AiPostCraft/image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903157/AiPostCraft/image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903158/AiPostCraft/image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903159/AiPostCraft/image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+        whatsapp: {
+          caption:
+            "Big news! 🎉 We're hosting a FREE webinar on Digital Marketing Trends with expert insights. Don't miss this chance to upgrade your skills and boost your business! 🚀",
+          hashtags: ['#DigitalMarketing', '#FreeWebinar', '#ExpertTips'],
+          cta: 'Register here: [Link]',
+          characterCount: 190,
+          media: {
+            variationId: 2,
+            images: [
+              {
+                filename: 'image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903156/AiPostCraft/image_e306173d-6866-42c5-8784-0a06a4980984.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903157/AiPostCraft/image_de86bbe2-cece-4930-a6c9-8d65d5282918.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903158/AiPostCraft/image_57070d1b-17ac-43d2-acf0-05146f554ccf.png',
+                isPlaceholder: false,
+              },
+              {
+                filename: 'image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756903159/AiPostCraft/image_7d9829c7-e330-4bff-a8f5-385f47bccdd8.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+      },
+    },
+  ],
+  metadata: {
+    generatedAt: '2025-09-03T12:39:19.990Z',
+    postType: 'carousel',
+    platforms: ['facebook', 'instagram', 'linkedin'],
+    category: 'Business',
+    unifiedStyle: false,
+    totalVariations: 2,
+  },
+};
+
+const secondGenetposts = {
+  variations: [
+    {
+      id: 1,
+      postType: 'image',
+      platforms: {
+        facebook: {
+          caption:
+            "Get ready to redefine your photography! 📸 The new Meco M1 Pro is here, packed with cutting-edge camera features that will transform your shots. Say goodbye to blurry night photos and hello to crystal-clear detail, even in the dimmest light! We've pushed the boundaries so you can capture every moment perfectly. What's the first thing you'd photograph with an M1 Pro? Tell us below! 👇",
+          hashtags: [
+            '#MecoM1Pro',
+            '#Meco',
+            '#NewSmartphone',
+            '#CameraRevolution',
+            '#MobilePhotography',
+            '#TechLaunch',
+            '#ProCamera',
+            '#NightMode',
+            '#CaptureTheMoment',
+            '#Innovation',
+          ],
+          cta: 'Learn more and pre-order yours today at meco.com!',
+          characterCount: 384,
+          media: {
+            variationId: 1,
+            images: [
+              {
+                filename: 'image_0b4403d7-f55f-46be-b934-add2dcb60a85.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756914521/AiPostCraft/image_0b4403d7-f55f-46be-b934-add2dcb60a85.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+      },
+    },
+    {
+      id: 2,
+      postType: 'image',
+      platforms: {
+        facebook: {
+          caption:
+            'Unleash your inner photographer! ✨ The Meco M1 Pro is designed for creators, adventurers, and anyone who loves to tell stories through stunning visuals. Our advanced camera system brings studio-quality shots to your pocket, with features like AI scene optimization and incredible zoom capabilities. Imagine the possibilities! What kind of stories will you tell with your Meco M1 Pro? Share your ideas! 👇',
+          hashtags: [
+            '#MecoM1Pro',
+            '#SmartphoneCamera',
+            '#PhotographyLovers',
+            '#TechGadgets',
+            '#NewPhone',
+            '#MecoTech',
+            '#CreativePhotography',
+            '#ZoomLens',
+            '#PicturePerfect',
+            '#Innovation',
+          ],
+          cta: 'Discover all the camera features and more at meco.com!',
+          characterCount: 396,
+          media: {
+            variationId: 2,
+            images: [
+              {
+                filename: 'image_4349e671-4440-4ec3-9641-afb5d314be5a.png',
+                url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1756914545/AiPostCraft/image_4349e671-4440-4ec3-9641-afb5d314be5a.png',
+                isPlaceholder: false,
+              },
+            ],
+          },
+        },
+      },
+    },
+  ],
+
+  metadata: {
+    generatedAt: '2025-09-03T15:49:06.105Z',
+    postType: 'image',
+    platforms: ['facebook'],
+    category: 'General',
+    unifiedStyle: false,
+    totalVariations: 2,
+  },
+};
+
 const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
   const [selectedVariation, setSelectedVariation] = useState(0);
   const [selectedPlatform, setSelectedPlatform] = useState('facebook');
   const [editingContent, setEditingContent] = useState({});
+  const [instagramMediaTab, setInstagramMediaTab] = useState('carousel');
 
+  // const generatedPosts = CarouselGeneratedPosts;
   const variations = generatedPosts.variations;
   const currentVariation = variations[selectedVariation];
   const currentPlatformData = currentVariation?.platforms[selectedPlatform];
+  // const platfroms = generatedPosts.metadata.platforms;
 
   useEffect(() => {
     initializeEditingContent();
@@ -35,6 +546,8 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
     twitter: { maxCaption: 280, maxHashtags: 10, name: 'Twitter/X' },
     whatsapp: { maxCaption: 1000, maxHashtags: 15, name: 'WhatsApp' },
   };
+
+  console.log({ generatedPosts });
 
   // Initialize editing content
   const initializeEditingContent = () => {
@@ -68,25 +581,125 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
     );
   };
 
-  const validateContent = () => {
-    const content = getCurrentContent();
-    const guidelines = platformGuidelines[selectedPlatform];
+  const currentContent = getCurrentContent();
 
-    return {
-      captionStatus:
-        content.caption?.length <= guidelines.maxCaption ? 'Good' : 'Too Long',
-      hashtagCount:
-        content.hashtags?.length <= guidelines.maxHashtags
-          ? 'Good'
-          : 'Too Many',
-      hasCTA: content.cta ? 'Yes' : 'No',
-    };
+  // Carousel and Video preview helpers
+  const renderCarousel = (images) => {
+    // Simple carousel preview (no controls for brevity)
+    return (
+      <div className="mb-3 flex space-x-2 overflow-x-auto">
+        {images.map((img, idx) => (
+          <img
+            key={idx}
+            src={img.url}
+            alt={`Carousel ${idx + 1}`}
+            className="w-32 h-32 object-cover rounded"
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const renderVideo = (video) => {
+    if (!video?.url) return null;
+    return (
+      <div className="mb-3">
+        <video
+          src={video.url}
+          controls
+          className="w-full rounded"
+          style={{ maxHeight: 320 }}
+        />
+      </div>
+    );
   };
 
   const renderPlatformPreview = () => {
     const content = getCurrentContent();
-    console.log({ uel: content.media.images[0]?.url });
-    const guidelines = platformGuidelines[selectedPlatform];
+    const postType = generatedPosts?.metadata?.postType || 'image'; // fallback to image
+
+    // Helper to render media based on postType
+    const renderMedia = () => {
+      console.log({ postType, cond: content.media?.images?.length > 1 });
+      if (postType === 'carousel' && content.media?.images?.length > 1) {
+        return renderCarousel(content.media.images);
+      }
+      if (postType === 'video' && content.media?.video) {
+        return renderVideo(content.media.video);
+      }
+      // Default: single image
+      if (content.media?.images && content.media.images[0]?.url) {
+        return (
+          <div className="mb-3">
+            <img
+              src={content.media.images[0]?.url}
+              alt="Generated content"
+              className="w-full rounded"
+            />
+          </div>
+        );
+      }
+      return null;
+    };
+
+    // Instagram media rendering logic
+    const renderInstagramMedia = () => {
+      const hasCarousel =
+        postType === 'carousel' && content.media?.images?.length > 1;
+      const hasVideo = postType === 'video' && content.media?.video;
+      const showTabs = hasCarousel && hasVideo;
+
+      if (showTabs) {
+        return (
+          <div>
+            <div className="flex space-x-2 mb-2">
+              <button
+                className={`px-3 py-1 rounded ${
+                  instagramMediaTab === 'carousel'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+                onClick={() => setInstagramMediaTab('carousel')}
+              >
+                Carousel
+              </button>
+              <button
+                className={`px-3 py-1 rounded ${
+                  instagramMediaTab === 'video'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+                onClick={() => setInstagramMediaTab('video')}
+              >
+                Video
+              </button>
+            </div>
+            {instagramMediaTab === 'carousel' &&
+              hasCarousel &&
+              renderCarousel(content.media.images)}
+            {instagramMediaTab === 'video' &&
+              hasVideo &&
+              renderVideo(content.media.video)}
+          </div>
+        );
+      }
+
+      if (hasCarousel) return renderCarousel(content.media.images);
+      if (hasVideo) return renderVideo(content.media.video);
+      if (content.media?.images && content.media.images[0]?.url) {
+        return (
+          <div className="mb-3">
+            <img
+              src={content.media.images[0]?.url}
+              alt="Generated content"
+              className="w-full"
+            />
+          </div>
+        );
+      }
+      return null;
+    };
+
     switch (selectedPlatform) {
       case 'facebook':
         return (
@@ -118,15 +731,7 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
               </div>
             </div>
 
-            {content.media.images && (
-              <div className="mb-3">
-                <img
-                  src={content.media.images[0]?.url}
-                  alt="Generated content"
-                  className="w-full rounded"
-                />
-              </div>
-            )}
+            {renderMedia()}
 
             <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
               <span>24</span>
@@ -151,7 +756,7 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
           </div>
         );
 
-      case 'instagram':
+      case 'instagram': {
         return (
           <div className="bg-white border border-gray-200 rounded-lg max-w-sm">
             <div className="flex items-center justify-between p-3 border-b">
@@ -168,15 +773,7 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
               <div className="w-1 h-1 bg-gray-400 rounded-full mt-1"></div>
             </div>
 
-            {content.media.images && (
-              <div className="mb-3">
-                <img
-                  src={content.media.images[0]?.url}
-                  alt="Generated content"
-                  className="w-full"
-                />
-              </div>
-            )}
+            <div>{renderInstagramMedia()}</div>
 
             <div className="p-3">
               <div className="flex space-x-4 mb-3">
@@ -227,6 +824,7 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
             </div>
           </div>
         );
+      }
 
       case 'linkedin':
         return (
@@ -263,15 +861,20 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
               </div>
             </div>
 
-            {content.media.images && (
-              <div className="mb-3">
-                <img
-                  src={content.media.images[0]?.url}
-                  alt="Generated content"
-                  className="w-full rounded"
-                />
-              </div>
-            )}
+            {postType === 'carousel' && content.media?.images?.length > 1
+              ? renderCarousel(content.media.images)
+              : postType === 'video' && content.media?.video
+                ? renderVideo(content.media.video)
+                : content.media?.images &&
+                  content.media.images[0]?.url && (
+                    <div className="mb-3">
+                      <img
+                        src={content.media.images[0]?.url}
+                        alt="Generated content"
+                        className="w-full rounded"
+                      />
+                    </div>
+                  )}
 
             <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
               <span>👁️ 47</span>
@@ -423,8 +1026,6 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
     }
   };
 
-  const validation = validateContent();
-
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Header with Actions */}
@@ -514,24 +1115,24 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
                 </label>
                 <span
                   className={`text-xs ${
-                    getCurrentContent().caption?.length >
+                    currentContent.caption?.length >
                     platformGuidelines[selectedPlatform].maxCaption
                       ? 'text-red-500'
                       : 'text-gray-500'
                   }`}
                 >
-                  {getCurrentContent().caption?.length || 0}/
+                  {currentContent.caption?.length || 0}/
                   {platformGuidelines[selectedPlatform].maxCaption}
                 </span>
               </div>
               <textarea
-                value={getCurrentContent().caption || ''}
+                value={currentContent.caption || ''}
                 onChange={(e) => handleContentChange('caption', e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows={4}
                 placeholder="Enter your caption..."
               />
-              {getCurrentContent().caption?.length >
+              {currentContent.caption?.length >
                 platformGuidelines[selectedPlatform].maxCaption && (
                 <p className="text-red-500 text-xs mt-1">
                   Caption exceeds the limit for{' '}
@@ -548,19 +1149,19 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
                 </label>
                 <span
                   className={`text-xs ${
-                    getCurrentContent().hashtags?.length >
+                    currentContent.hashtags?.length >
                     platformGuidelines[selectedPlatform].maxHashtags
                       ? 'text-red-500'
                       : 'text-gray-500'
                   }`}
                 >
-                  {getCurrentContent().hashtags?.length || 0}/
+                  {currentContent.hashtags?.length || 0}/
                   {platformGuidelines[selectedPlatform].maxHashtags} hashtags
                 </span>
               </div>
               <input
                 type="text"
-                value={getCurrentContent().hashtags?.join(' ') || ''}
+                value={currentContent.hashtags?.join(' ') || ''}
                 onChange={(e) =>
                   handleContentChange(
                     'hashtags',
@@ -582,7 +1183,7 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
               </label>
               <input
                 type="text"
-                value={getCurrentContent().cta || ''}
+                value={currentContent.cta || ''}
                 onChange={(e) => handleContentChange('cta', e.target.value)}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Comment your thoughts below! 👍"
@@ -590,53 +1191,6 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
               <p className="text-xs text-gray-500 mt-1">
                 Encourage engagement with your audience
               </p>
-            </div>
-
-            {/* Content Guidelines */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-3">
-                Content Guidelines
-              </h4>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Caption Status:</span>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      validation.captionStatus === 'Good'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {validation.captionStatus}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Hashtag Count:</span>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      validation.hashtagCount === 'Good'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {validation.hashtagCount}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
-                    Has Call to Action:
-                  </span>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      validation.hasCTA === 'Yes'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {validation.hasCTA}
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
