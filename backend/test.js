@@ -9,7 +9,7 @@ const { uploadFile } = require('../backend/src/services/uploadFile');
 A man murmurs, 'This must be it. That's the secret code.' The woman looks at him and whispering excitedly, 'What did you find?`;
 
   const variations = 1;
-  const apiKey = 'AIzaSyBWwwfwe6Bz4webgwc-4fJ4OPy4T4KAxgM';
+  const apiKey = '';
   console.log({ apiKey });
   const ai = new GoogleGenAI({
     apiKey,
