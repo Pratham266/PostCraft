@@ -1,219 +1,169 @@
-# PostCraft
+# PostCraft - AI-Powered Social Media Post Generator
 
-A modern full-stack web application built with React, Redux Toolkit, Express.js, and MongoDB.
+PostCraft is a comprehensive AI-powered social media post generation platform that creates engaging content across multiple platforms using Google's Gemini AI models.
 
-## Project Structure
+## Features
 
-```
-PostCraft/
-├── frontend/          # React + Vite frontend
-│   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Page components
-│   │   ├── store/         # Redux store and slices
-│   │   ├── lib/           # API configuration and utilities
-│   │   ├── hooks/         # Custom React hooks
-│   │   └── utils/         # Utility functions
-│   ├── public/            # Static assets
-│   └── package.json
-├── backend/           # Express.js + MongoDB backend
-│   ├── src/
-│   │   ├── routes/        # API routes
-│   │   ├── controllers/   # Route controllers
-│   │   ├── models/        # Data models (schema-less)
-│   │   ├── middleware/    # Custom middleware
-│   │   ├── utils/         # Database and utility functions
-│   │   └── cli/           # CLI commands using coa
-│   └── package.json
-├── .gitignore
-└── README.md
-```
+- **AI-Powered Content Generation**: Uses Google Gemini 2.0 Flash for text generation
+- **Multi-Platform Support**: Facebook, Instagram, LinkedIn, Twitter/X, WhatsApp
+- **Media Generation**: 
+  - Images using Imagen 3.0
+  - Videos using Veo 3.0
+  - Carousel posts with multiple images
+- **Platform-Specific Optimization**: Automatically adapts content for each platform's guidelines
+- **Multiple Variations**: Generate 1-5 creative variations of each post
+- **Real-time Editing**: Edit captions, hashtags, and CTAs
+- **Export Functionality**: Download complete post packages with media and metadata
+- **Brand-Safe Content**: All generated content is filtered for brand safety
 
 ## Tech Stack
 
-### Frontend
-- **React 19** - UI library
-- **Vite** - Build tool and dev server
-- **Redux Toolkit** - State management
-- **React Router DOM** - Client-side routing
-- **Tailwind CSS** - Utility-first CSS framework
-- **Axios** - HTTP client with interceptors
-- **ESLint + Prettier** - Code linting and formatting
-
 ### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **MongoDB** - Document database (native driver, no Mongoose)
-- **coa** - CLI command builder
-- **CORS** - Cross-origin resource sharing
-- **dotenv** - Environment variable management
+- Node.js with Express
+- MongoDB for data storage
+- Google Gemini AI API
+- JWT authentication
+- File upload handling
 
-## Getting Started
+### Frontend
+- React with Vite
+- Redux for state management
+- Tailwind CSS for styling
+- Axios for API communication
+
+## Setup Instructions
 
 ### Prerequisites
-- Node.js (v20.15.1 or higher)
-- MongoDB (running locally or connection string)
-- npm or yarn
+- Node.js (v16 or higher)
+- MongoDB
+- Google AI API key
 
-### Installation
+### Backend Setup
 
-1. Clone the repository:
+1. Navigate to the backend directory:
 ```bash
-git clone <repository-url>
-cd PostCraft
+cd backend
 ```
 
-2. Install frontend dependencies:
+2. Install dependencies:
 ```bash
-cd frontend
 npm install
 ```
 
-3. Install backend dependencies:
+3. Create environment file:
 ```bash
-cd ../backend
+cp .env.example .env
+```
+
+4. Update `.env` with your configuration:
+```env
+MONGODB_URI=mongodb://localhost:27017/postcraft
+JWT_SECRET=your_jwt_secret_here
+GOOGLE_API_KEY=your_google_api_key_here
+PORT=3001
+NODE_ENV=development
+```
+
+5. Start the backend server:
+```bash
+npm run dev
+```
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+```bash
 npm install
 ```
 
-### Environment Setup
-
-1. Copy environment files:
+3. Create environment file:
 ```bash
-# Frontend
-cp frontend/.env.example frontend/.env
-
-# Backend
-cp backend/.env.example backend/.env
+cp .env.example .env
 ```
 
-2. Update the environment variables in `.env` files as needed.
+4. Update `.env` with your configuration:
+```env
+VITE_API_URL=http://localhost:3001/api
+```
 
-### Running the Application
-
-#### Development Mode
-
-1. Start the backend server:
+5. Start the frontend development server:
 ```bash
-cd backend
 npm run dev
 ```
-The backend will run on `http://localhost:3001`
-
-2. Start the frontend development server:
-```bash
-cd frontend
-npm run dev
-```
-The frontend will run on `http://localhost:5173`
-
-#### Production Mode
-
-1. Build the frontend:
-```bash
-cd frontend
-npm run build
-```
-
-2. Start the backend:
-```bash
-cd backend
-npm start
-```
-
-## Available Scripts
-
-### Frontend Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint errors
-- `npm run format` - Format code with Prettier
-- `npm run format:check` - Check code formatting
-
-### Backend Scripts
-- `npm run dev` - Start development server with nodemon
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint errors
-- `npm run format` - Format code with Prettier
-- `npm run format:check` - Check code formatting
-- `npm run cli` - Run CLI commands
-- `npm run seed` - Seed database with sample data
 
 ## API Endpoints
 
-### Health Check
-- `GET /api/health` - Server health status
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
 
-### Users
-- `GET /api/users` - Get all users
-- `GET /api/users/:id` - Get user by ID
-- `POST /api/users` - Create new user
-- `PUT /api/users/:id` - Update user
-- `DELETE /api/users/:id` - Delete user
+### Posts
+- `POST /api/posts/generate` - Generate AI posts
+- `POST /api/posts/regenerate/:variationId` - Regenerate specific variation
+- `PUT /api/posts/edit/:variationId/:platform` - Edit caption for platform
+- `POST /api/posts/export` - Export posts package
+- `GET /api/posts/guidelines` - Get platform guidelines
 
-## CLI Commands
+## Usage
 
-The backend includes a CLI tool built with the `coa` library:
+1. **Create Account**: Register or login to access the dashboard
+2. **Enter Post Idea**: Describe what you want to post about
+3. **Select Post Type**: Choose between image, carousel, or video
+4. **Choose Platforms**: Select which social media platforms to target
+5. **Configure Settings**: Set category, unified style, and number of variations
+6. **Generate**: Click "Generate AI Posts" to create content
+7. **Review & Edit**: View platform-specific previews and edit as needed
+8. **Export**: Download complete post packages with media and metadata
 
-```bash
-# Show version
-npm run cli -- --version
+## Platform Guidelines
 
-# List all users
-npm run cli -- user list
+The system automatically enforces platform-specific guidelines:
 
-# Create a new user
-npm run cli -- user create --name "John Doe" --email "john@example.com"
+- **Facebook**: 2200 char limit, 30 hashtags max, conversational style
+- **Instagram**: 2200 char limit, 30 hashtags max, visual/aesthetic style
+- **LinkedIn**: 3000 char limit, 5 hashtags max, professional style
+- **Twitter**: 280 char limit, 5 hashtags max, concise style
+- **WhatsApp**: 1000 char limit, 10 hashtags max, personal style
 
-# Seed database with sample data
-npm run seed
+## File Structure
+
 ```
-
-## Database
-
-The application uses MongoDB with a schema-less, document-driven approach. No Mongoose is used - the native MongoDB driver is used directly for maximum flexibility.
-
-### Sample User Document
-```json
-{
-  "_id": "ObjectId",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "createdAt": "2024-01-01T00:00:00.000Z",
-  "updatedAt": "2024-01-01T00:00:00.000Z"
-}
+PostCraft/
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── utils/
+│   └── uploads/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── lib/
+│   │   └── store/
+└── README.md
 ```
-
-## Development Guidelines
-
-### Code Style
-- Use ESLint and Prettier for consistent code formatting
-- Follow React best practices and hooks patterns
-- Use Redux Toolkit for state management
-- Implement proper error handling and loading states
-
-### API Design
-- RESTful API design principles
-- Consistent error response format
-- Proper HTTP status codes
-- Input validation and sanitization
-
-### Database
-- Schema-less approach for flexibility
-- Consistent document structure
-- Proper indexing for performance
-- Data validation at the application level
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Run tests and linting
+4. Add tests if applicable
 5. Submit a pull request
 
 ## License
 
-This project is licensed under the ISC License.
+This project is licensed under the MIT License.
+
+## Support
+
+For support, email support@postcraft.ai or create an issue in the repository.

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '../components/ui/button';
+import PostResults from '../components/PostResults';
+import { postsAPI } from '../lib/api/posts';
 
 const Dashboard = () => {
   const { user } = useSelector((state) => state.user);
@@ -11,6 +13,9 @@ const Dashboard = () => {
   const [unifiedStyle, setUnifiedStyle] = useState(false);
   const [postVariation, setPostVariation] = useState(1);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedPosts, setGeneratedPosts] = useState(null);
+  const [error, setError] = useState(null);
 
   const platforms = [
     {
@@ -169,14 +174,119 @@ const Dashboard = () => {
     setSelectedPlatforms([]);
   };
 
-  const handleGenerate = () => {
-    console.log('Generating posts with:', {
-      postIdea,
-      postType,
-      selectedPlatforms,
-      category,
-      unifiedStyle,
-    });
+  const handleGenerate = async () => {
+    if (!postIdea.trim()) {
+      setError('Please enter a post idea');
+      return;
+    }
+
+    if (selectedPlatforms.length === 0) {
+      setError('Please select at least one platform');
+      return;
+    }
+
+    setIsGenerating(true);
+    setError(null);
+    setGeneratedPosts(null);
+
+    try {
+      const response = await postsAPI.generatePosts({
+        postIdea,
+        postType,
+        selectedPlatforms,
+        category,
+        unifiedStyle,
+        postVariation
+      });
+
+      if (response.success) {
+        setGeneratedPosts(response.data);
+      } else {
+        setError(response.error || 'Failed to generate posts');
+      }
+    } catch (error) {
+      console.error('Error generating posts:', error);
+      setError(error.response?.data?.error || 'Failed to generate posts. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleRegenerate = async (variationId) => {
+    try {
+      const response = await postsAPI.regenerateVariation(variationId, {
+        postIdea,
+        postType,
+        selectedPlatforms,
+        category,
+        unifiedStyle
+      });
+
+      if (response.success) {
+        // Update the specific variation in the generated posts
+        setGeneratedPosts(prev => ({
+          ...prev,
+          variations: prev.variations.map(variation => 
+            variation.id === variationId ? response.data.variation : variation
+          )
+        }));
+      }
+    } catch (error) {
+      console.error('Error regenerating variation:', error);
+      setError('Failed to regenerate variation. Please try again.');
+    }
+  };
+
+  const handleEdit = async (variationId, platform, data) => {
+    try {
+      const response = await postsAPI.editCaption(variationId, platform, data);
+
+      if (response.success) {
+        // Update the specific platform content in the generated posts
+        setGeneratedPosts(prev => ({
+          ...prev,
+          variations: prev.variations.map(variation => 
+            variation.id === variationId 
+              ? {
+                  ...variation,
+                  platforms: {
+                    ...variation.platforms,
+                    [platform]: {
+                      ...variation.platforms[platform],
+                      caption: data.caption,
+                      hashtags: data.hashtags,
+                      cta: data.cta,
+                      characterCount: data.caption.length
+                    }
+                  }
+                }
+              : variation
+          )
+        }));
+      }
+    } catch (error) {
+      console.error('Error editing caption:', error);
+      setError('Failed to edit caption. Please try again.');
+    }
+  };
+
+  const handleExport = async (variations, metadata) => {
+    try {
+      const blob = await postsAPI.exportPosts({ variations, metadata });
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `postcraft-export-${Date.now()}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting posts:', error);
+      setError('Failed to export posts. Please try again.');
+    }
   };
 
   return (
@@ -280,6 +390,18 @@ const Dashboard = () => {
               with AI
             </p>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span className="text-red-800">{error}</span>
+              </div>
+            </div>
+          )}
 
           {/* Post Idea Section */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -543,17 +665,40 @@ const Dashboard = () => {
           {/* Generate Button */}
           <Button
             onClick={handleGenerate}
-            className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-lg flex items-center justify-center space-x-2"
+            disabled={isGenerating}
+            className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-lg flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>Generate AI Posts</span>
+            {isGenerating ? (
+              <>
+                <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Generating AI Posts...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>Generate AI Posts</span>
+              </>
+            )}
           </Button>
+
+          {/* Generated Posts Results */}
+          {generatedPosts && (
+            <PostResults
+              results={generatedPosts}
+              onRegenerate={handleRegenerate}
+              onEdit={handleEdit}
+              onExport={handleExport}
+            />
+          )}
         </div>
       </div>
     </div>
