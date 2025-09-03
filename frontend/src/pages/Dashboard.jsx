@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '../components/ui/button';
 import PostResults from '../components/PostResults';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { postsAPI } from '../lib/api/posts';
 
 const Dashboard = () => {
@@ -82,7 +83,6 @@ const Dashboard = () => {
     'News',
     'Politics',
     'Science',
-    'Technology',
     'Health',
     'Travel',
     'Food',
@@ -95,7 +95,6 @@ const Dashboard = () => {
     'Pets',
     'Parenting',
     'Religion',
-    'Politics',
   ];
 
   const postTypes = [
@@ -196,7 +195,7 @@ const Dashboard = () => {
         selectedPlatforms,
         category,
         unifiedStyle,
-        postVariation
+        postVariation,
       });
 
       if (response.success) {
@@ -206,35 +205,17 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error('Error generating posts:', error);
-      setError(error.response?.data?.error || 'Failed to generate posts. Please try again.');
+      setError(
+        error.response?.data?.error ||
+          'Failed to generate posts. Please try again.'
+      );
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleRegenerate = async (variationId) => {
-    try {
-      const response = await postsAPI.regenerateVariation(variationId, {
-        postIdea,
-        postType,
-        selectedPlatforms,
-        category,
-        unifiedStyle
-      });
-
-      if (response.success) {
-        // Update the specific variation in the generated posts
-        setGeneratedPosts(prev => ({
-          ...prev,
-          variations: prev.variations.map(variation => 
-            variation.id === variationId ? response.data.variation : variation
-          )
-        }));
-      }
-    } catch (error) {
-      console.error('Error regenerating variation:', error);
-      setError('Failed to regenerate variation. Please try again.');
-    }
+  const handleRegenerate = async () => {
+    await handleGenerate();
   };
 
   const handleEdit = async (variationId, platform, data) => {
@@ -243,10 +224,10 @@ const Dashboard = () => {
 
       if (response.success) {
         // Update the specific platform content in the generated posts
-        setGeneratedPosts(prev => ({
+        setGeneratedPosts((prev) => ({
           ...prev,
-          variations: prev.variations.map(variation => 
-            variation.id === variationId 
+          variations: prev.variations.map((variation) =>
+            variation.id === variationId
               ? {
                   ...variation,
                   platforms: {
@@ -256,12 +237,12 @@ const Dashboard = () => {
                       caption: data.caption,
                       hashtags: data.hashtags,
                       cta: data.cta,
-                      characterCount: data.caption.length
-                    }
-                  }
+                      characterCount: data.caption.length,
+                    },
+                  },
                 }
               : variation
-          )
+          ),
         }));
       }
     } catch (error) {
@@ -270,12 +251,12 @@ const Dashboard = () => {
     }
   };
 
-  const handleExport = async (variations, metadata) => {
+  const handleExport = async () => {
     try {
-      const blob = await postsAPI.exportPosts({ variations, metadata });
-      
+      const response = await postsAPI.exportPosts(generatedPosts);
+
       // Create download link
-      const url = window.URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(response);
       const link = document.createElement('a');
       link.href = url;
       link.download = `postcraft-export-${Date.now()}.zip`;
@@ -290,418 +271,340 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-white transform rotate-12"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">PostCraft</h1>
-                <p className="text-sm text-gray-500">AI Post Generator</p>
-              </div>
-            </div>
+    <>
+      {isGenerating && <LoadingSpinner />}
 
-            <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-gray-600">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 1 0-15 0v5h5l-5 5-5-5h5v-5a7.5 7.5 0 1 1 15 0v5z"
-                  />
-                </svg>
-              </button>
-              <button className="p-2 text-gray-400 hover:text-gray-600">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-              </button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-medium">
-                    {user?.firstName?.charAt(0)?.toUpperCase()}
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 10h6m-6 4h6m-6 4h4"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    PostCraft
+                  </h1>
+                  <p className="text-sm text-gray-600">
+                    AI-Powered Social Media Content Creation
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-900">
+                    {user?.name}
+                  </p>
+                  <p className="text-xs text-gray-500">{user?.email}</p>
+                </div>
+                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium text-purple-600">
+                    {user?.name?.charAt(0)?.toUpperCase()}
                   </span>
                 </div>
-                <svg
-                  className="w-4 h-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content - Full Width */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="space-y-6">
-          {/* Welcome Section */}
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Create Amazing Social Media Posts
-            </h2>
-            <p className="text-gray-600">
-              Transform your ideas into engaging content across all platforms
-              with AI
-            </p>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-center">
-                <svg className="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                <span className="text-red-800">{error}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Post Idea Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-yellow-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Your Post Idea
-              </h3>
-            </div>
-
-            <textarea
-              value={postIdea}
-              onChange={(e) => setPostIdea(e.target.value)}
-              placeholder="Describe your post idea... (e.g., 'A motivational quote about success for entrepreneurs')"
-              className="w-full h-32 p-4 border border-gray-200 rounded-lg resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              maxLength={500}
-            />
-
-            <div className="flex items-center justify-between mt-3">
-              <span className="text-sm text-gray-500">
-                {postIdea.length}/500 characters
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center space-x-2"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>AI Suggestions</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Post Type Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Post Type
-            </h3>
-            <div className="grid grid-cols-3 gap-4">
-              {postTypes.map((type) => (
-                <button
-                  key={type.id}
-                  onClick={() => setPostType(type.id)}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    postType === type.id
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                  }`}
-                >
-                  <div className="flex justify-center mb-2">{type.icon}</div>
-                  <div className="font-medium text-center">{type.name}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Platform Selection Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Select Platforms
-                </h3>
-                <p className="text-sm text-gray-500">
-                  Choose where to publish your content
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          {!generatedPosts ? (
+            /* Input Form */
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  Create AI-Powered Social Media Posts
+                </h2>
+                <p className="text-gray-600">
+                  Generate engaging content for multiple platforms with
+                  AI-powered creativity
                 </p>
               </div>
-              <div className="flex items-center space-x-3">
-                {selectedPlatforms.length !== platforms.length ? (
-                  <button
-                    onClick={handleSelectAll}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    Select All
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleDeselectAll}
-                    className="text-sm text-blue-600 hover:text-gray-700 font-medium"
-                  >
-                    Clear All
-                  </button>
-                )}
-              </div>
-            </div>
 
-            <div className="mb-4">
-              <span className="text-sm text-gray-500">
-                {selectedPlatforms.length} of {platforms.length} selected
-              </span>
-            </div>
-
-            <div className="grid grid-cols-5 gap-4">
-              {platforms.map((platform) => (
-                <button
-                  key={platform.id}
-                  onClick={() => handlePlatformToggle(platform.id)}
-                  className={`relative p-4 rounded-lg border-2 transition-all ${
-                    selectedPlatforms.includes(platform.id)
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div
-                    className={`w-12 h-12 ${platform.color} rounded-lg flex items-center justify-center text-white mb-3 mx-auto`}
-                  >
-                    {platform.icon}
-                  </div>
-                  <div className="font-medium text-gray-900 text-center">
-                    {platform.name}
-                  </div>
-                  {selectedPlatforms.includes(platform.id) && (
-                    <div className="absolute top-2 right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+              {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
                       <svg
-                        className="w-3 h-3 text-white"
-                        fill="currentColor"
+                        className="h-5 w-5 text-red-400"
                         viewBox="0 0 20 20"
+                        fill="currentColor"
                       >
                         <path
                           fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                           clipRule="evenodd"
                         />
                       </svg>
                     </div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Content Settings Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Content Settings
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category
-                </label>
-                <div className="relative w-full">
-                  <button
-                    type="button"
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent flex justify-between items-center"
-                    onClick={() => setShowCategoryDropdown((prev) => !prev)}
-                  >
-                    <span>{category && category !== '' && category}</span>
-                    <svg
-                      className={`w-4 h-4 ml-2 transition-transform ${
-                        showCategoryDropdown ? 'rotate-180' : ''
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                  {showCategoryDropdown && (
-                    <div className="absolute z-10 bottom-full mb-1 w-full bg-white border border-gray-400 rounded-lg shadow-lg max-h-60 overflow-y-auto p-2">
-                      {categories.map((cat) => (
-                        <div
-                          key={cat}
-                          className={`px-4 py-2 cursor-pointer hover:bg-purple-50 ${
-                            category === cat
-                              ? 'bg-purple-100 font-semibold'
-                              : ''
-                          }`}
-                          onClick={() => {
-                            setCategory(cat);
-                            setShowCategoryDropdown(false);
-                          }}
-                        >
-                          {cat}
-                        </div>
-                      ))}
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-red-800">
+                        Error
+                      </h3>
+                      <div className="mt-2 text-sm text-red-700">{error}</div>
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="flex items-center justify-between">
+              <div className="space-y-8">
+                {/* Post Idea */}
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Unified Content Style
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    What's your post idea?
                   </label>
-                  <p className="text-sm text-gray-500">
-                    Generate consistent content across all platforms
-                  </p>
+                  <textarea
+                    value={postIdea}
+                    onChange={(e) => setPostIdea(e.target.value)}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                    rows={4}
+                    placeholder="Describe your post idea, campaign, or content theme..."
+                  />
                 </div>
-                <button
-                  onClick={() => setUnifiedStyle(!unifiedStyle)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    unifiedStyle ? 'bg-blue-600' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      unifiedStyle ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
 
-            {/* Post Variation Section */}
-            <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Post Variation
-              </label>
-              <div className="flex space-x-4">
-                {[1, 2, 3, 4, 5].map((num) => (
-                  <label
-                    key={num}
-                    className={`flex items-center space-x-2 cursor-pointer border rounded-lg px-4 py-2 transition-colors ${
-                      postVariation === num
-                        ? 'border-purple-600 bg-purple-50'
-                        : 'border-gray-300 bg-white hover:border-purple-400'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="postVariation"
-                      value={num}
-                      checked={postVariation === num}
-                      onChange={() => setPostVariation(num)}
-                      className="form-radio text-purple-600 focus:ring-purple-500"
-                    />
-                    <span className="text-gray-700">{num}</span>
+                {/* Post Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Post Type
                   </label>
-                ))}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {postTypes.map((type) => (
+                      <button
+                        key={type.id}
+                        onClick={() => setPostType(type.id)}
+                        className={`p-4 border-2 rounded-lg text-left transition-all ${
+                          postType === type.id
+                            ? 'border-purple-500 bg-purple-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className={`p-2 rounded-lg ${
+                              postType === type.id
+                                ? 'bg-purple-100'
+                                : 'bg-gray-100'
+                            }`}
+                          >
+                            {type.icon}
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-gray-900">
+                              {type.name}
+                            </h3>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Platform Selection */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Select Platforms
+                    </label>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={handleSelectAll}
+                        className="text-xs text-purple-600 hover:text-purple-700"
+                      >
+                        Select All
+                      </button>
+                      <span className="text-gray-300">|</span>
+                      <button
+                        onClick={handleDeselectAll}
+                        className="text-xs text-gray-600 hover:text-gray-700"
+                      >
+                        Deselect All
+                      </button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {platforms.map((platform) => (
+                      <button
+                        key={platform.id}
+                        onClick={() => handlePlatformToggle(platform.id)}
+                        className={`p-3 border-2 rounded-lg text-center transition-all ${
+                          selectedPlatforms.includes(platform.id)
+                            ? 'border-purple-500 bg-purple-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="flex flex-col items-center space-y-2">
+                          <div
+                            className={`p-2 rounded-lg text-white ${
+                              selectedPlatforms.includes(platform.id)
+                                ? platform.color
+                                : 'bg-gray-400'
+                            }`}
+                          >
+                            {platform.icon}
+                          </div>
+                          <span className="text-xs font-medium text-gray-700">
+                            {platform.name}
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Category and Style */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Category
+                    </label>
+                    <div className="relative">
+                      <button
+                        onClick={() =>
+                          setShowCategoryDropdown(!showCategoryDropdown)
+                        }
+                        className="w-full p-3 border border-gray-300 rounded-lg text-left focus:ring-2 focus:ring-purple-500 focus:border-transparent flex items-center justify-between"
+                      >
+                        <span>{category}</span>
+                        <svg
+                          className={`w-5 h-5 text-gray-400 transition-transform ${
+                            showCategoryDropdown ? 'rotate-180' : ''
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {showCategoryDropdown && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                          {categories.map((cat) => (
+                            <button
+                              key={cat}
+                              onClick={() => {
+                                setCategory(cat);
+                                setShowCategoryDropdown(false);
+                              }}
+                              className="w-full px-4 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
+                            >
+                              {cat}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Style Preference
+                    </label>
+                    <div className="flex items-center space-x-4">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="style"
+                          checked={!unifiedStyle}
+                          onChange={() => setUnifiedStyle(false)}
+                          className="mr-2"
+                        />
+                        <span className="text-sm text-gray-700">
+                          Platform Optimized
+                        </span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="style"
+                          checked={unifiedStyle}
+                          onChange={() => setUnifiedStyle(true)}
+                          className="mr-2"
+                        />
+                        <span className="text-sm text-gray-700">
+                          Unified Style
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Variations */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Number of Variations
+                  </label>
+                  <div className="flex space-x-2">
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <button
+                        key={num}
+                        onClick={() => setPostVariation(num)}
+                        className={`px-4 py-2 border rounded-lg text-sm font-medium transition-all ${
+                          postVariation === num
+                            ? 'border-purple-500 bg-purple-50 text-purple-700'
+                            : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Generate Button */}
+                <div className="pt-4">
+                  <Button
+                    onClick={handleGenerate}
+                    disabled={
+                      isGenerating ||
+                      !postIdea.trim() ||
+                      selectedPlatforms.length === 0
+                    }
+                    className="w-full py-4 text-lg"
+                  >
+                    {isGenerating ? (
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Generating AI-Powered Posts...</span>
+                      </div>
+                    ) : (
+                      'Generate Posts'
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Generate Button */}
-          <Button
-            onClick={handleGenerate}
-            disabled={isGenerating}
-            className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-lg flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isGenerating ? (
-              <>
-                <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>Generating AI Posts...</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>Generate AI Posts</span>
-              </>
-            )}
-          </Button>
-
-          {/* Generated Posts Results */}
-          {generatedPosts && (
+          ) : (
+            /* Post Results */
             <PostResults
-              results={generatedPosts}
+              generatedPosts={generatedPosts}
               onRegenerate={handleRegenerate}
               onEdit={handleEdit}
               onExport={handleExport}
+              isLoading={isGenerating}
             />
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

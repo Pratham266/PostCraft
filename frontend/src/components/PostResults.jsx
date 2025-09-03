@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 
-const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading }) => {
+const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
   const [selectedVariation, setSelectedVariation] = useState(0);
   const [selectedPlatform, setSelectedPlatform] = useState('facebook');
   const [editingContent, setEditingContent] = useState({});
@@ -29,17 +29,17 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
     instagram: { maxCaption: 2200, maxHashtags: 30, name: 'Instagram' },
     linkedin: { maxCaption: 3000, maxHashtags: 15, name: 'LinkedIn' },
     twitter: { maxCaption: 280, maxHashtags: 10, name: 'Twitter/X' },
-    whatsapp: { maxCaption: 1000, maxHashtags: 15, name: 'WhatsApp' }
+    whatsapp: { maxCaption: 1000, maxHashtags: 15, name: 'WhatsApp' },
   };
 
   // Initialize editing content
   const initializeEditingContent = () => {
     if (!editingContent[selectedVariation]) {
-      setEditingContent(prev => ({
+      setEditingContent((prev) => ({
         ...prev,
         [selectedVariation]: {
-          ...currentVariation.platforms
-        }
+          ...currentVariation.platforms,
+        },
       }));
     }
   };
@@ -49,37 +49,44 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
   }, [selectedVariation, selectedPlatform]);
 
   const handleContentChange = (field, value) => {
-    setEditingContent(prev => ({
+    setEditingContent((prev) => ({
       ...prev,
       [selectedVariation]: {
         ...prev[selectedVariation],
         [selectedPlatform]: {
           ...prev[selectedVariation][selectedPlatform],
-          [field]: value
-        }
-      }
+          [field]: value,
+        },
+      },
     }));
   };
 
   const getCurrentContent = () => {
-    return editingContent[selectedVariation]?.[selectedPlatform] || currentPlatformData;
+    return (
+      editingContent[selectedVariation]?.[selectedPlatform] ||
+      currentPlatformData
+    );
   };
 
   const validateContent = () => {
     const content = getCurrentContent();
     const guidelines = platformGuidelines[selectedPlatform];
-    
+
     return {
-      captionStatus: content.caption?.length <= guidelines.maxCaption ? 'Good' : 'Too Long',
-      hashtagCount: content.hashtags?.length <= guidelines.maxHashtags ? 'Good' : 'Too Many',
-      hasCTA: content.cta ? 'Yes' : 'No'
+      captionStatus:
+        content.caption?.length <= guidelines.maxCaption ? 'Good' : 'Too Long',
+      hashtagCount:
+        content.hashtags?.length <= guidelines.maxHashtags
+          ? 'Good'
+          : 'Too Many',
+      hasCTA: content.cta ? 'Yes' : 'No',
     };
   };
 
   const renderPlatformPreview = () => {
     const content = getCurrentContent();
     const guidelines = platformGuidelines[selectedPlatform];
-    
+    console.log({ currentVariation });
     switch (selectedPlatform) {
       case 'facebook':
         return (
@@ -98,21 +105,23 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
                 <div className="w-1 h-1 bg-gray-400 rounded-full mt-1"></div>
               </div>
             </div>
-            
+
             <div className="mb-3">
               <p className="text-sm mb-2">{content.caption}</p>
               <p className="text-sm font-medium mb-2">{content.cta}</p>
               <div className="flex flex-wrap gap-1">
                 {content.hashtags?.map((tag, index) => (
-                  <span key={index} className="text-blue-600 text-xs">#{tag.replace('#', '')}</span>
+                  <span key={index} className="text-blue-600 text-xs">
+                    #{tag.replace('#', '')}
+                  </span>
                 ))}
               </div>
             </div>
 
             {currentVariation.media?.images && (
               <div className="mb-3">
-                <img 
-                  src={currentVariation.media.images[0]?.url} 
+                <img
+                  src={currentVariation.media.images[0]?.filepath}
                   alt="Generated content"
                   className="w-full rounded"
                 />
@@ -159,10 +168,11 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
               <div className="w-1 h-1 bg-gray-400 rounded-full mt-1"></div>
             </div>
 
+            {console.log({ currentVariation })}
             {currentVariation.media?.images && (
               <div className="mb-3">
-                <img 
-                  src={currentVariation.media.images[0]?.url} 
+                <img
+                  src={currentVariation.media.images[0]?.filepath}
                   alt="Generated content"
                   className="w-full"
                 />
@@ -172,35 +182,48 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
             <div className="p-3">
               <div className="flex space-x-4 mb-3">
                 <button className="text-gray-600 hover:text-red-500">🤍</button>
-                <button className="text-gray-600 hover:text-blue-500">💬</button>
-                <button className="text-gray-600 hover:text-blue-500">📤</button>
-                <button className="text-gray-600 hover:text-blue-500">🔖</button>
+                <button className="text-gray-600 hover:text-blue-500">
+                  💬
+                </button>
+                <button className="text-gray-600 hover:text-blue-500">
+                  📤
+                </button>
+                <button className="text-gray-600 hover:text-blue-500">
+                  🔖
+                </button>
               </div>
-              
+
               <div className="text-sm font-semibold mb-1">152 likes</div>
-              
+
               <div className="text-sm mb-2">
-                <span className="font-semibold">your_page</span> {content.caption}
+                <span className="font-semibold">your_page</span>{' '}
+                {content.caption}
               </div>
-              
+
               <div className="text-sm mb-2">{content.cta}</div>
-              
+
               <div className="flex flex-wrap gap-1 mb-2">
                 {content.hashtags?.map((tag, index) => (
-                  <span key={index} className="text-blue-600 text-xs">#{tag.replace('#', '')}</span>
+                  <span key={index} className="text-blue-600 text-xs">
+                    #{tag.replace('#', '')}
+                  </span>
                 ))}
               </div>
-              
-              <div className="text-xs text-gray-500 mb-2">View all 12 comments</div>
+
+              <div className="text-xs text-gray-500 mb-2">
+                View all 12 comments
+              </div>
               <div className="text-xs text-gray-500">2 MINUTES AGO</div>
-              
+
               <div className="flex items-center space-x-2 mt-3 border-t pt-3">
-                <input 
-                  type="text" 
-                  placeholder="Add a comment..." 
+                <input
+                  type="text"
+                  placeholder="Add a comment..."
                   className="flex-1 text-sm border-none outline-none"
                 />
-                <button className="text-blue-500 text-sm font-semibold">Post</button>
+                <button className="text-blue-500 text-sm font-semibold">
+                  Post
+                </button>
               </div>
             </div>
           </div>
@@ -220,7 +243,9 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <button className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs">+ Follow</button>
+                <button className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs">
+                  + Follow
+                </button>
                 <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
                 <div className="w-1 h-1 bg-gray-400 rounded-full mt-1"></div>
                 <div className="w-1 h-1 bg-gray-400 rounded-full mt-1"></div>
@@ -232,15 +257,17 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
               <p className="text-sm font-medium mb-2">{content.cta}</p>
               <div className="flex flex-wrap gap-1">
                 {content.hashtags?.map((tag, index) => (
-                  <span key={index} className="text-blue-600 text-xs">#{tag.replace('#', '')}</span>
+                  <span key={index} className="text-blue-600 text-xs">
+                    #{tag.replace('#', '')}
+                  </span>
                 ))}
               </div>
             </div>
 
             {currentVariation.media?.images && (
               <div className="mb-3">
-                <img 
-                  src={currentVariation.media.images[0]?.url} 
+                <img
+                  src={currentVariation.media.images[0]?.filepath}
                   alt="Generated content"
                   className="w-full rounded"
                 />
@@ -294,23 +321,24 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
 
             <div className="mb-3">
               <p className="text-sm mb-2">
-                {content.caption?.length > 280 ? 
-                  `${content.caption.substring(0, 280)}...` : 
-                  content.caption
-                }
+                {content.caption?.length > 280
+                  ? `${content.caption.substring(0, 280)}...`
+                  : content.caption}
               </p>
               <p className="text-sm font-medium mb-2">{content.cta}</p>
               <div className="flex flex-wrap gap-1">
                 {content.hashtags?.map((tag, index) => (
-                  <span key={index} className="text-blue-600 text-xs">#{tag.replace('#', '')}</span>
+                  <span key={index} className="text-blue-600 text-xs">
+                    #{tag.replace('#', '')}
+                  </span>
                 ))}
               </div>
             </div>
 
             {currentVariation.media?.images && (
               <div className="mb-3 rounded-lg overflow-hidden">
-                <img 
-                  src={currentVariation.media.images[0]?.url} 
+                <img
+                  src={currentVariation.media.images[0]?.filepath}
                   alt="Generated content"
                   className="w-full"
                 />
@@ -343,8 +371,10 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
 
               {currentVariation.media?.images && (
                 <div className="mb-3">
-                  <img 
-                    src={currentVariation.media.images[0]?.url} 
+                  <img
+                    src={
+                      '/Users/prathambarot/Desktop/other/PostCraft/backend/uploads/media1_1.png'
+                    }
                     alt="Generated content"
                     className="w-full rounded"
                   />
@@ -353,10 +383,14 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
 
               <div className="mb-3">
                 <p className="text-sm text-green-800 mb-2">{content.caption}</p>
-                <p className="text-sm font-medium text-green-800 mb-2">{content.cta}</p>
+                <p className="text-sm font-medium text-green-800 mb-2">
+                  {content.cta}
+                </p>
                 <div className="flex flex-wrap gap-1">
                   {content.hashtags?.map((tag, index) => (
-                    <span key={index} className="text-blue-600 text-xs">#{tag.replace('#', '')}</span>
+                    <span key={index} className="text-blue-600 text-xs">
+                      #{tag.replace('#', '')}
+                    </span>
                   ))}
                 </div>
               </div>
@@ -377,9 +411,9 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
             </div>
 
             <div className="mt-3 flex items-center space-x-2 bg-white rounded-lg p-2">
-              <input 
-                type="text" 
-                placeholder="Type a message..." 
+              <input
+                type="text"
+                placeholder="Type a message..."
                 className="flex-1 text-sm border-none outline-none"
               />
               <button className="text-green-500">📤</button>
@@ -433,26 +467,28 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <h3 className="text-lg font-semibold mb-4">Platform Selection</h3>
             <div className="flex space-x-2">
-              {Object.entries(platformGuidelines).map(([platform, guidelines]) => (
-                <button
-                  key={platform}
-                  onClick={() => setSelectedPlatform(platform)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    selectedPlatform === platform
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  <span className="text-lg">
-                    {platform === 'facebook' && '📘'}
-                    {platform === 'instagram' && '📷'}
-                    {platform === 'linkedin' && '💼'}
-                    {platform === 'twitter' && '🐦'}
-                    {platform === 'whatsapp' && '💬'}
-                  </span>
-                  <span>{guidelines.name}</span>
-                </button>
-              ))}
+              {Object.entries(platformGuidelines).map(
+                ([platform, guidelines]) => (
+                  <button
+                    key={platform}
+                    onClick={() => setSelectedPlatform(platform)}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      selectedPlatform === platform
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    <span className="text-lg">
+                      {platform === 'facebook' && '📘'}
+                      {platform === 'instagram' && '📷'}
+                      {platform === 'linkedin' && '💼'}
+                      {platform === 'twitter' && '🐦'}
+                      {platform === 'whatsapp' && '💬'}
+                    </span>
+                    <span>{guidelines.name}</span>
+                  </button>
+                )
+              )}
             </div>
           </div>
 
@@ -460,11 +496,15 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center space-x-2 mb-4">
               <span className="text-lg">✏️</span>
-              <h3 className="text-lg font-semibold">Editing for {platformGuidelines[selectedPlatform].name}</h3>
+              <h3 className="text-lg font-semibold">
+                Editing for {platformGuidelines[selectedPlatform].name}
+              </h3>
             </div>
-            
+
             <div className="text-sm text-gray-600 mb-4">
-              Max Caption: {platformGuidelines[selectedPlatform].maxCaption.toLocaleString()} characters
+              Max Caption:{' '}
+              {platformGuidelines[selectedPlatform].maxCaption.toLocaleString()}{' '}
+              characters
               <br />
               Max Hashtags: {platformGuidelines[selectedPlatform].maxHashtags}
             </div>
@@ -472,13 +512,19 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
             {/* Caption Editor */}
             <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-medium text-gray-700">Caption</label>
-                <span className={`text-xs ${
-                  getCurrentContent().caption?.length > platformGuidelines[selectedPlatform].maxCaption 
-                    ? 'text-red-500' 
-                    : 'text-gray-500'
-                }`}>
-                  {getCurrentContent().caption?.length || 0}/{platformGuidelines[selectedPlatform].maxCaption}
+                <label className="text-sm font-medium text-gray-700">
+                  Caption
+                </label>
+                <span
+                  className={`text-xs ${
+                    getCurrentContent().caption?.length >
+                    platformGuidelines[selectedPlatform].maxCaption
+                      ? 'text-red-500'
+                      : 'text-gray-500'
+                  }`}
+                >
+                  {getCurrentContent().caption?.length || 0}/
+                  {platformGuidelines[selectedPlatform].maxCaption}
                 </span>
               </div>
               <textarea
@@ -488,9 +534,11 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
                 rows={4}
                 placeholder="Enter your caption..."
               />
-              {getCurrentContent().caption?.length > platformGuidelines[selectedPlatform].maxCaption && (
+              {getCurrentContent().caption?.length >
+                platformGuidelines[selectedPlatform].maxCaption && (
                 <p className="text-red-500 text-xs mt-1">
-                  Caption exceeds the limit for {platformGuidelines[selectedPlatform].name}
+                  Caption exceeds the limit for{' '}
+                  {platformGuidelines[selectedPlatform].name}
                 </p>
               )}
             </div>
@@ -498,28 +546,43 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
             {/* Hashtags Editor */}
             <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-medium text-gray-700"># Hashtags</label>
-                <span className={`text-xs ${
-                  getCurrentContent().hashtags?.length > platformGuidelines[selectedPlatform].maxHashtags 
-                    ? 'text-red-500' 
-                    : 'text-gray-500'
-                }`}>
-                  {getCurrentContent().hashtags?.length || 0}/{platformGuidelines[selectedPlatform].maxHashtags} hashtags
+                <label className="text-sm font-medium text-gray-700">
+                  # Hashtags
+                </label>
+                <span
+                  className={`text-xs ${
+                    getCurrentContent().hashtags?.length >
+                    platformGuidelines[selectedPlatform].maxHashtags
+                      ? 'text-red-500'
+                      : 'text-gray-500'
+                  }`}
+                >
+                  {getCurrentContent().hashtags?.length || 0}/
+                  {platformGuidelines[selectedPlatform].maxHashtags} hashtags
                 </span>
               </div>
               <input
                 type="text"
                 value={getCurrentContent().hashtags?.join(' ') || ''}
-                onChange={(e) => handleContentChange('hashtags', e.target.value.split(' ').filter(tag => tag.trim()))}
+                onChange={(e) =>
+                  handleContentChange(
+                    'hashtags',
+                    e.target.value.split(' ').filter((tag) => tag.trim())
+                  )
+                }
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="#hashtag1 #hashtag2 #hashtag3"
               />
-              <p className="text-xs text-gray-500 mt-1">Separate hashtags with spaces. Include the # symbol.</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Separate hashtags with spaces. Include the # symbol.
+              </p>
             </div>
 
             {/* Call to Action Editor */}
             <div className="mb-4">
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Call to Action</label>
+              <label className="text-sm font-medium text-gray-700 mb-2 block">
+                Call to Action
+              </label>
               <input
                 type="text"
                 value={getCurrentContent().cta || ''}
@@ -527,34 +590,52 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Comment your thoughts below! 👍"
               />
-              <p className="text-xs text-gray-500 mt-1">Encourage engagement with your audience</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Encourage engagement with your audience
+              </p>
             </div>
 
             {/* Content Guidelines */}
             <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-3">Content Guidelines</h4>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">
+                Content Guidelines
+              </h4>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Caption Status:</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    validation.captionStatus === 'Good' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      validation.captionStatus === 'Good'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
                     {validation.captionStatus}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Hashtag Count:</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    validation.hashtagCount === 'Good' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      validation.hashtagCount === 'Good'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
                     {validation.hashtagCount}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Has Call to Action:</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    validation.hasCTA === 'Yes' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span className="text-sm text-gray-600">
+                    Has Call to Action:
+                  </span>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      validation.hasCTA === 'Yes'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
                     {validation.hasCTA}
                   </span>
                 </div>
@@ -574,12 +655,12 @@ const PostResults = ({ generatedPosts, onRegenerate, onEdit, onExport, isLoading
                 {selectedPlatform === 'twitter' && '🐦'}
                 {selectedPlatform === 'whatsapp' && '💬'}
               </span>
-              <h3 className="text-lg font-semibold">{platformGuidelines[selectedPlatform].name} Preview</h3>
+              <h3 className="text-lg font-semibold">
+                {platformGuidelines[selectedPlatform].name} Preview
+              </h3>
             </div>
-            
-            <div className="flex justify-center">
-              {renderPlatformPreview()}
-            </div>
+
+            <div className="flex justify-center">{renderPlatformPreview()}</div>
           </div>
         </div>
       </div>

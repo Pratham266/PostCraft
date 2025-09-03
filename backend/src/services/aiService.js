@@ -46,127 +46,25 @@ class AIService {
   }
 
   // Extract JSON from markdown code blocks with better error handling
-  extractJSONFromResponse(text) {
+  extractJSONFromResponse(response) {
     try {
-      // Remove markdown code blocks if present
-      let cleanText = text
-        .replace(/```json\s*/g, '')
-        .replace(/```\s*/g, '')
-        .trim();
+      // get first candidate’s text
+      const text = response?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-      // Try to parse the cleaned text
-      return JSON.parse(cleanText);
-    } catch (error) {
-      console.error('JSON parsing error:', error.message);
-      console.error('Raw text length:', text.length);
-
-      // If parsing fails, try to find JSON within the text
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        try {
-          let jsonString = jsonMatch[0];
-
-          // Fix common JSON issues
-          // 1. Remove trailing commas
-          jsonString = jsonString.replace(/,(\s*[}\]])/g, '$1');
-
-          // 2. Fix unterminated strings by finding the last complete property
-          if (jsonString.includes('"cta": "')) {
-            const ctaMatch = jsonString.match(/"cta":\s*"([^"]*?)(?:"|$)/);
-            if (ctaMatch && !ctaMatch[1].endsWith('"')) {
-              // Truncate at the last complete word and close the string
-              const truncatedCta = ctaMatch[1].trim();
-              const lastSpaceIndex = truncatedCta.lastIndexOf(' ');
-              const finalCta =
-                lastSpaceIndex > 0
-                  ? truncatedCta.substring(0, lastSpaceIndex)
-                  : truncatedCta;
-              jsonString = jsonString.replace(
-                /"cta":\s*"[^"]*?(?:"|$)/,
-                `"cta": "${finalCta}"`
-              );
-            }
-          }
-
-          // 3. Ensure the JSON is properly closed
-          if (!jsonString.endsWith('}')) {
-            // Find the last complete property and close the JSON
-            const lastCompleteProperty = jsonString.lastIndexOf('}');
-            if (lastCompleteProperty > 0) {
-              jsonString = jsonString.substring(0, lastCompleteProperty + 1);
-            } else {
-              // If no complete properties, add a basic structure
-              jsonString = jsonString.replace(/,\s*$/, '') + '}';
-            }
-          }
-
-          return JSON.parse(jsonString);
-        } catch (parseError) {
-          console.error('Failed to parse extracted JSON:', parseError);
-
-          // Last resort: create a minimal valid JSON structure
-          try {
-            const fallbackJson = {
-              variations: [
-                {
-                  id: 1,
-                  platforms: {
-                    facebook: {
-                      caption:
-                        "Exciting news! We're launching a new housing project. Stay tuned for more details!",
-                      hashtags: [
-                        '#NewHousingProject',
-                        '#RealEstate',
-                        '#DreamHome',
-                      ],
-                      cta: 'Learn more on our website!',
-                      characterCount: 100,
-                    },
-                    instagram: {
-                      caption:
-                        '✨ New housing project coming soon! ✨ Stay tuned for updates!',
-                      hashtags: [
-                        '#NewHousingProject',
-                        '#RealEstate',
-                        '#DreamHome',
-                      ],
-                      cta: 'Follow for updates!',
-                      characterCount: 80,
-                    },
-                    linkedin: {
-                      caption:
-                        "We're excited to announce our new housing development project. More details coming soon.",
-                      hashtags: ['#RealEstateDevelopment', '#NewHousing'],
-                      cta: 'Learn more on our website.',
-                      characterCount: 120,
-                    },
-                    twitter: {
-                      caption:
-                        'Big news! New housing project launching soon! 🏡 #NewHousing #RealEstate',
-                      hashtags: ['#NewHousing', '#RealEstate'],
-                      cta: 'Learn more!',
-                      characterCount: 80,
-                    },
-                    whatsapp: {
-                      caption:
-                        "Hey! Exciting news - we're launching a new housing project! 🏡 More details soon!",
-                      hashtags: ['#NewHousing', '#RealEstate'],
-                      cta: 'Stay tuned!',
-                      characterCount: 90,
-                    },
-                  },
-                },
-              ],
-            };
-            console.log('Using fallback JSON structure');
-            return fallbackJson;
-          } catch (fallbackError) {
-            console.error('Fallback JSON creation failed:', fallbackError);
-            throw new Error('Invalid JSON response from AI');
-          }
-        }
+      if (!text) {
+        throw new Error('No text found in response.');
       }
-      throw new Error('No valid JSON found in response');
+
+      // remove markdown code fences if present
+      const cleaned = text.replace(/```json|```/g, '').trim();
+
+      // parse JSON
+      const json = JSON.parse(cleaned);
+
+      return json;
+    } catch (error) {
+      console.error('Failed to extract JSON from response:', error);
+      return null;
     }
   }
 
@@ -229,78 +127,62 @@ Return the response as a JSON object with this structure:
   ]
 }`;
 
+      console.log('Generating text content...');
       const response = await this.ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           systemInstruction: systemInstruction,
           temperature: 0.8,
-          maxOutputTokens: 1500,
         },
       });
 
-      console.log('Raw AI response length:', response.text.length);
-      return this.extractJSONFromResponse(response.text);
+      console.dir({ chekccontent: response }, { depth: null });
+      return this.extractJSONFromResponse(response);
     } catch (error) {
       console.error('Error generating text content:', error);
       throw new Error('Failed to generate text content');
     }
   }
 
-  // Generate images using Imagen 4.0
+  // Generate images using Google GenAI Imagen model
   async generateImages(prompt, variations, postType) {
     try {
+      console.log(`Generating ${variations} image variations using Imagen...`);
       const results = [];
+      const numberOfImages = postType === 'carousel' ? 4 : 1;
+
+      // Ensure uploads directory exists
+      const uploadsDir = path.join(process.cwd(), 'uploads');
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
 
       for (let i = 0; i < variations; i++) {
         try {
-          // Create different image prompts for each variation
-          let imagePrompt = prompt;
-
-          if (postType === 'carousel') {
-            imagePrompt = `Create a series of 3-5 related images for: ${prompt}. Each image should be visually connected but show different aspects or angles. Style: modern, professional, social media optimized.`;
-          } else if (postType === 'video') {
-            imagePrompt = `Create a compelling thumbnail image for a video about: ${prompt}. Style: dynamic, engaging, video thumbnail optimized.`;
-          } else {
-            imagePrompt = `Create a high-quality, engaging image for social media about: ${prompt}. Style: modern, professional, visually appealing, optimized for social media.`;
-          }
-
-          console.log(
-            `Generating images for variation ${i + 1} with prompt: ${imagePrompt}`
-          );
-
-          // Use Imagen 4.0 for image generation
+          // Call the Google GenAI Imagen model
           const response = await this.ai.models.generateImages({
             model: 'imagen-4.0-generate-001',
-            prompt: imagePrompt,
+            prompt: prompt,
             config: {
-              numberOfImages: postType === 'carousel' ? 4 : 1,
+              numberOfImages: numberOfImages,
             },
           });
 
           const variationImages = [];
           let idx = 1;
-
           for (const generatedImage of response.generatedImages) {
-            const imgBytes = generatedImage.image.imageBytes;
+            let imgBytes = generatedImage.image.imageBytes;
             const buffer = Buffer.from(imgBytes, 'base64');
-
-            // Create unique filename
             const filename = `media${i + 1}_${idx}.png`;
-            const filepath = path.join(process.cwd(), 'uploads', filename);
-
-            // Ensure uploads directory exists
-            const uploadsDir = path.dirname(filepath);
-            if (!fs.existsSync(uploadsDir)) {
-              fs.mkdirSync(uploadsDir, { recursive: true });
-            }
-
+            const filepath = path.join(uploadsDir, filename);
             fs.writeFileSync(filepath, buffer);
+
             variationImages.push({
               filename,
               filepath,
               url: `/uploads/${filename}`,
-              isGenerated: true,
+              isPlaceholder: false,
             });
             idx++;
           }
@@ -310,12 +192,9 @@ Return the response as a JSON object with this structure:
             images: variationImages,
           });
 
-          console.log(
-            `Successfully generated ${variationImages.length} images for variation ${i + 1}`
-          );
+          console.log(`Generated images for variation ${i + 1}`);
         } catch (imageError) {
           console.error(`Error generating image ${i + 1}:`, imageError);
-          // Continue with other images even if one fails
           results.push({
             variationId: i + 1,
             images: [],
@@ -324,6 +203,7 @@ Return the response as a JSON object with this structure:
         }
       }
 
+      console.log('Image generation completed');
       return results;
     } catch (error) {
       console.error('Error generating images:', error);
@@ -331,57 +211,49 @@ Return the response as a JSON object with this structure:
     }
   }
 
-  // Generate videos using Veo 3.0
+  // Generate videos using placeholder system (faster for testing)
   async generateVideos(prompt, variations) {
     try {
+      console.log(
+        `Generating ${variations} video variations using Gemini AI...`
+      );
       const results = [];
 
       for (let i = 1; i <= variations; i++) {
         try {
-          const videoPrompt = `Create a short, engaging video (5-10 seconds) about: ${prompt}. 
-          Style: modern, professional, social media optimized. 
-          Include smooth transitions, good lighting, and engaging visuals. 
-          Perfect for social media platforms like Instagram, Facebook, and TikTok.`;
-
-          console.log(`Generating video ${i} with prompt: ${videoPrompt}`);
-
-          // Use Veo 3.0 for video generation
-          let operation = await this.ai.models.generateVideos({
+          // Start the video generation job
+          let operation = await ai.models.generateVideos({
             model: 'veo-3.0-generate-preview',
-            prompt: videoPrompt,
+            prompt: prompt,
           });
 
-          console.log(
-            `Video generation ${i} started, operation: ${operation.name}`
-          );
-
-          // Poll the operation status until the video is ready
+          // Poll for completion
           while (!operation.done) {
-            console.log(`Waiting for video generation ${i} to complete...`);
-            await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
-            // Refresh the operation object to get the latest status
-            operation = await this.ai.operations.getVideosOperation({
-              operation,
-            });
+            await new Promise((resolve) => setTimeout(resolve, 10000)); // 10 seconds
+            operation = await ai.operations.getVideosOperation({ operation });
           }
 
-          console.log(`Video generation ${i} completed!`);
+          // Once done, get the video bytes
+          const videoResponse = operation.response;
+          if (
+            !videoResponse ||
+            !videoResponse.generatedVideos ||
+            !videoResponse.generatedVideos[0]
+          ) {
+            throw new Error('No video generated by Gemini AI');
+          }
 
-          // Download the generated video
+          const videoBytes = videoResponse.generatedVideos[0].video.videoBytes;
+          const buffer = Buffer.from(videoBytes, 'base64');
+
+          // Save the video to the uploads directory
           const filename = `video${i}.mp4`;
-          const filepath = path.join(process.cwd(), 'uploads', filename);
-
-          // Ensure uploads directory exists
-          const uploadsDir = path.dirname(filepath);
+          const uploadsDir = path.join(process.cwd(), 'uploads');
           if (!fs.existsSync(uploadsDir)) {
             fs.mkdirSync(uploadsDir, { recursive: true });
           }
-
-          // Download the video file
-          await this.ai.files.download({
-            file: operation.response.generatedVideos[0].video,
-            downloadPath: filepath,
-          });
+          const filepath = path.join(uploadsDir, filename);
+          fs.writeFileSync(filepath, buffer);
 
           results.push({
             variationId: i,
@@ -389,14 +261,13 @@ Return the response as a JSON object with this structure:
               filename,
               filepath,
               url: `/uploads/${filename}`,
-              isGenerated: true,
+              isPlaceholder: false,
             },
           });
 
-          console.log(`Successfully generated and saved video ${i}`);
+          console.log(`Generated video for variation ${i}`);
         } catch (videoError) {
           console.error(`Error generating video ${i}:`, videoError);
-          // Continue with other videos even if one fails
           results.push({
             variationId: i,
             video: null,
@@ -405,6 +276,7 @@ Return the response as a JSON object with this structure:
         }
       }
 
+      console.log('Video generation completed');
       return results;
     } catch (error) {
       console.error('Error generating videos:', error);
@@ -433,8 +305,8 @@ Return the response as a JSON object with this structure:
         postVariation,
       });
 
-      // Generate text content
-      console.log('Generating text content...');
+      // Generate text content first (fastest)
+      console.log('Step 1/3: Generating text content...');
       const textContent = await this.generateTextContent(
         postIdea,
         postType,
@@ -444,21 +316,22 @@ Return the response as a JSON object with this structure:
         postVariation
       );
 
-      // Generate media based on post type
+      // Generate media based on post type (using placeholders for speed)
       let mediaContent = [];
       if (postType === 'image' || postType === 'carousel') {
-        console.log('Generating images...');
+        console.log('Step 2/3: Generating images...');
         mediaContent = await this.generateImages(
           postIdea,
           postVariation,
           postType
         );
       } else if (postType === 'video') {
-        console.log('Generating videos...');
+        console.log('Step 2/3: Generating videos...');
         mediaContent = await this.generateVideos(postIdea, postVariation);
       }
 
       // Combine text and media content
+      console.log('Step 3/3: Combining content...');
       const results = textContent.variations.map((variation, index) => {
         const media = mediaContent[index] || {};
 
