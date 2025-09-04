@@ -252,9 +252,10 @@ Return the response as a JSON object with this structure:
             file: operation.response.generatedVideos[0].video,
             downloadPath: filename,
           });
+          // Add a small delay to ensure file is fully written
+          await new Promise((resolve) => setTimeout(resolve, 1000));
 
           const link = await uploadFile(filename, filename, 'video');
-
           // Delete the video file from the local location after upload
           if (fs.existsSync(filename)) {
             fs.unlinkSync(filename);

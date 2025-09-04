@@ -1,6 +1,143 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 
+const videoGeneratedPosts = {
+  variations: [
+    {
+      id: 1,
+      postType: 'video',
+      platforms: {
+        facebook: {
+          caption:
+            "Dreaming of a future in tech? 🚀 Our online AI & Coding courses make it easy to master complex skills, build incredible projects, and launch a thriving career! Learn at your own pace with expert guidance. What's one AI project you'd love to create? Share below!",
+          hashtags: [
+            '#AICoding',
+            '#LearnOnline',
+            '#TechEducation',
+            '#FutureSkills',
+            '#CodingForBeginners',
+            '#ProjectBasedLearning',
+            '#Innovation',
+            '#DigitalSkills',
+            '#CareerLaunch',
+            '#OnlineLearning',
+          ],
+          cta: "Click 'Learn More' to explore courses!",
+          characterCount: 328,
+          media: {
+            variationId: 1,
+            video: {
+              filename: 'video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              url: 'https://res.cloudinary.com/dsmk1zmjv/video/upload/v1756964522/AiPostCraft/video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              isPlaceholder: false,
+            },
+          },
+        },
+        instagram: {
+          caption:
+            "Unlock your potential in the world of AI & Coding! ✨ Our online programs are designed for ease, enabling you to build impressive projects and launch your tech future. From beginner to pro, we've got you covered. Ready to code your destiny? 💻",
+          hashtags: [
+            '#AICoding',
+            '#TechSkills',
+            '#OnlineLearning',
+            '#CodeLife',
+            '#FutureProof',
+            '#DeveloperLife',
+            '#InnovationNation',
+            '#ProjectBased',
+            '#LearnToCode',
+            '#CareerGoals',
+            '#DigitalTransformation',
+            '#AIForEveryone',
+            '#CodingCommunity',
+            '#TechEducation',
+            '#SkillUp',
+          ],
+          cta: 'Tap the link in bio to enroll!',
+          characterCount: 294,
+          media: {
+            variationId: 1,
+            video: {
+              filename: 'video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              url: 'https://res.cloudinary.com/dsmk1zmjv/video/upload/v1756964522/AiPostCraft/video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              isPlaceholder: false,
+            },
+          },
+        },
+        linkedin: {
+          caption:
+            'Elevate your career trajectory in the rapidly evolving tech landscape. Our comprehensive online AI & Coding programs offer practical, project-based learning, equipping professionals with in-demand skills for innovation and leadership. Invest in your professional development and drive the future of technology.',
+          hashtags: [
+            '#AI',
+            '#Coding',
+            '#TechSkills',
+            '#ProfessionalDevelopment',
+            '#FutureOfWork',
+          ],
+          cta: 'Visit our website for course details and enrollment.',
+          characterCount: 310,
+          media: {
+            variationId: 1,
+            video: {
+              filename: 'video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              url: 'https://res.cloudinary.com/dsmk1zmjv/video/upload/v1756964522/AiPostCraft/video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              isPlaceholder: false,
+            },
+          },
+        },
+        twitter: {
+          caption:
+            'Master AI & Coding online with ease! 🚀 Build amazing projects, launch your tech career. Practical skills, flexible learning. Your future starts here! #AICoding #LearnToCode #TechSkills #OnlineLearning',
+          hashtags: [
+            '#AICoding',
+            '#LearnToCode',
+            '#TechSkills',
+            '#OnlineLearning',
+            '#FutureProof',
+          ],
+          cta: 'Enroll now!',
+          characterCount: 190,
+          media: {
+            variationId: 1,
+            video: {
+              filename: 'video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              url: 'https://res.cloudinary.com/dsmk1zmjv/video/upload/v1756964522/AiPostCraft/video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              isPlaceholder: false,
+            },
+          },
+        },
+        whatsapp: {
+          caption:
+            'Ready to master AI & Coding? 🤖💻 Our online courses make it easy to learn, build projects, and kickstart your tech career! Flexible & practical. Want to know more? 🤔',
+          hashtags: [
+            '#AICoding',
+            '#OnlineLearning',
+            '#CodeYourFuture',
+            '#TechSkills',
+          ],
+          cta: "Reply 'INFO' or click the link to explore courses!",
+          characterCount: 200,
+          media: {
+            variationId: 1,
+            video: {
+              filename: 'video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              url: 'https://res.cloudinary.com/dsmk1zmjv/video/upload/v1756964522/AiPostCraft/video_a2b80a60-d1f2-4fc7-997a-36503089af84.mp4',
+              isPlaceholder: false,
+            },
+          },
+        },
+      },
+    },
+  ],
+  metadata: {
+    generatedAt: '2025-09-04T05:42:03.807Z',
+    postType: 'video',
+    platforms: ['facebook'],
+    category: 'General',
+    unifiedStyle: false,
+    totalVariations: 1,
+  },
+};
 const CarouselGeneratedPosts = {
   variations: [
     {
@@ -516,6 +653,9 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
   const [instagramMediaTab, setInstagramMediaTab] = useState('carousel');
 
   // const generatedPosts = CarouselGeneratedPosts;
+  // const generatedPosts = videoGeneratedPosts;
+  // const generatedPosts = secondGenetposts;
+
   const variations = generatedPosts.variations;
   const currentVariation = variations[selectedVariation];
   const currentPlatformData = currentVariation?.platforms[selectedPlatform];
