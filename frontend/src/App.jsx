@@ -10,6 +10,7 @@ import About from './pages/About';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Previews from './pages/Previews';
 
 // Component to handle initial app setup
 const AppInitializer = ({ children }) => {
@@ -33,27 +34,37 @@ function App() {
             {/* Auth pages (no layout) */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            
+
             {/* Main app pages (with layout and protection) */}
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Layout>
-                  <Home />
-                </Layout>
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/about" element={
-              <ProtectedRoute>
-                <Layout>
-                  <About />
-                </Layout>
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Home />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <About />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/test" element={<Previews />} />
           </Routes>
         </Router>
       </AppInitializer>
