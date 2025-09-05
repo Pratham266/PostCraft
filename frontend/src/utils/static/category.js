@@ -1,0 +1,27 @@
+const categories = [
+  'General',
+  'Business',
+  'Lifestyle',
+  'Technology',
+  'Education',
+  'Health & Wellness',
+  'Entertainment',
+  'Sports',
+  'News',
+  'Politics',
+  'Science',
+  'Health',
+  'Travel',
+  'Food',
+  'Fashion',
+  'Art',
+  'Music',
+  'Movies',
+  'Books',
+  'Gaming',
+  'Pets',
+  'Parenting',
+  'Religion',
+];
+
+export default categories;

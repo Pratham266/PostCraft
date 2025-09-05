@@ -6,13 +6,23 @@ const archiver = require('archiver');
 // Generate AI-powered posts
 const generatePosts = async (req, res) => {
   try {
-    const { postIdea, postType, selectedPlatforms, category, unifiedStyle, postVariation } = req.body;
+    const { postIdea, postType, selectedPlatforms, category, unifiedStyle } =
+      req.body;
+
+    // if you want to create multiple variations, you can take change the postVariation from the req.body
+    const postVariation = 1;
 
     // Validate required fields
-    if (!postIdea || !postType || !selectedPlatforms || selectedPlatforms.length === 0) {
+    if (
+      !postIdea ||
+      !postType ||
+      !selectedPlatforms ||
+      selectedPlatforms.length === 0
+    ) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: postIdea, postType, and selectedPlatforms are required'
+        error:
+          'Missing required fields: postIdea, postType, and selectedPlatforms are required',
       });
     }
 
@@ -21,17 +31,25 @@ const generatePosts = async (req, res) => {
     if (!validPostTypes.includes(postType)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid post type. Must be one of: image, carousel, video'
+        error: 'Invalid post type. Must be one of: image, carousel, video',
       });
     }
 
     // Validate platforms
-    const validPlatforms = ['facebook', 'instagram', 'linkedin', 'twitter', 'whatsapp'];
-    const invalidPlatforms = selectedPlatforms.filter(platform => !validPlatforms.includes(platform));
+    const validPlatforms = [
+      'facebook',
+      'instagram',
+      'linkedin',
+      'twitter',
+      'whatsapp',
+    ];
+    const invalidPlatforms = selectedPlatforms.filter(
+      (platform) => !validPlatforms.includes(platform)
+    );
     if (invalidPlatforms.length > 0) {
       return res.status(400).json({
         success: false,
-        error: `Invalid platforms: ${invalidPlatforms.join(', ')}`
+        error: `Invalid platforms: ${invalidPlatforms.join(', ')}`,
       });
     }
 
@@ -39,7 +57,7 @@ const generatePosts = async (req, res) => {
     if (postVariation < 1 || postVariation > 5) {
       return res.status(400).json({
         success: false,
-        error: 'Post variation must be between 1 and 5'
+        error: 'Post variation must be between 1 and 5',
       });
     }
 
@@ -49,7 +67,7 @@ const generatePosts = async (req, res) => {
       selectedPlatforms,
       category,
       unifiedStyle,
-      postVariation
+      postVariation,
     });
 
     // Generate posts using AI service
@@ -59,7 +77,7 @@ const generatePosts = async (req, res) => {
       selectedPlatforms,
       category: category || 'General',
       unifiedStyle: unifiedStyle || false,
-      postVariation: postVariation || 1
+      postVariation: postVariation || 1,
     });
 
     if (!result.success) {
@@ -71,7 +89,7 @@ const generatePosts = async (req, res) => {
     console.error('Error in generatePosts controller:', error);
     res.status(500).json({
       success: false,
-      error: 'Internal server error while generating posts'
+      error: 'Internal server error while generating posts',
     });
   }
 };
@@ -80,12 +98,13 @@ const generatePosts = async (req, res) => {
 const regenerateVariation = async (req, res) => {
   try {
     const { variationId } = req.params;
-    const { postIdea, postType, selectedPlatforms, category, unifiedStyle } = req.body;
+    const { postIdea, postType, selectedPlatforms, category, unifiedStyle } =
+      req.body;
 
     if (!postIdea || !postType || !selectedPlatforms) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields for regeneration'
+        error: 'Missing required fields for regeneration',
       });
     }
 
@@ -96,7 +115,7 @@ const regenerateVariation = async (req, res) => {
       selectedPlatforms,
       category: category || 'General',
       unifiedStyle: unifiedStyle || false,
-      postVariation: 1
+      postVariation: 1,
     });
 
     if (!result.success) {
@@ -108,14 +127,14 @@ const regenerateVariation = async (req, res) => {
       success: true,
       data: {
         variation: result.data.variations[0],
-        metadata: result.data.metadata
-      }
+        metadata: result.data.metadata,
+      },
     });
   } catch (error) {
     console.error('Error in regenerateVariation controller:', error);
     res.status(500).json({
       success: false,
-      error: 'Internal server error while regenerating variation'
+      error: 'Internal server error while regenerating variation',
     });
   }
 };
@@ -129,16 +148,22 @@ const editCaption = async (req, res) => {
     if (!caption) {
       return res.status(400).json({
         success: false,
-        error: 'Caption is required'
+        error: 'Caption is required',
       });
     }
 
     // Validate platform
-    const validPlatforms = ['facebook', 'instagram', 'linkedin', 'twitter', 'whatsapp'];
+    const validPlatforms = [
+      'facebook',
+      'instagram',
+      'linkedin',
+      'twitter',
+      'whatsapp',
+    ];
     if (!validPlatforms.includes(platform)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid platform'
+        error: 'Invalid platform',
       });
     }
 
@@ -150,7 +175,7 @@ const editCaption = async (req, res) => {
     if (caption.length > platformGuidelines.maxCaptionLength) {
       return res.status(400).json({
         success: false,
-        error: `Caption too long. Maximum ${platformGuidelines.maxCaptionLength} characters for ${platform}`
+        error: `Caption too long. Maximum ${platformGuidelines.maxCaptionLength} characters for ${platform}`,
       });
     }
 
@@ -158,7 +183,7 @@ const editCaption = async (req, res) => {
     if (hashtags && hashtags.length > platformGuidelines.maxHashtags) {
       return res.status(400).json({
         success: false,
-        error: `Too many hashtags. Maximum ${platformGuidelines.maxHashtags} hashtags for ${platform}`
+        error: `Too many hashtags. Maximum ${platformGuidelines.maxHashtags} hashtags for ${platform}`,
       });
     }
 
@@ -171,14 +196,14 @@ const editCaption = async (req, res) => {
         hashtags: hashtags || [],
         cta: cta || platformGuidelines.cta,
         characterCount: caption.length,
-        updatedAt: new Date().toISOString()
-      }
+        updatedAt: new Date().toISOString(),
+      },
     });
   } catch (error) {
     console.error('Error in editCaption controller:', error);
     res.status(500).json({
       success: false,
-      error: 'Internal server error while editing caption'
+      error: 'Internal server error while editing caption',
     });
   }
 };
@@ -191,7 +216,7 @@ const exportPosts = async (req, res) => {
     if (!variations || !Array.isArray(variations)) {
       return res.status(400).json({
         success: false,
-        error: 'Variations data is required'
+        error: 'Variations data is required',
       });
     }
 
@@ -200,31 +225,33 @@ const exportPosts = async (req, res) => {
       metadata: {
         ...metadata,
         exportedAt: new Date().toISOString(),
-        totalVariations: variations.length
+        totalVariations: variations.length,
       },
-      variations: variations.map(variation => ({
+      variations: variations.map((variation) => ({
         id: variation.id,
         postType: variation.postType,
         platforms: variation.platforms,
         media: variation.media,
-        exportReady: true
-      }))
+        exportReady: true,
+      })),
     };
 
     // Create ZIP file with all media and metadata
     const archive = archiver('zip', { zlib: { level: 9 } });
-    
+
     res.attachment(`postcraft-export-${Date.now()}.zip`);
     archive.pipe(res);
 
     // Add metadata JSON
-    archive.append(JSON.stringify(exportData, null, 2), { name: 'metadata.json' });
+    archive.append(JSON.stringify(exportData, null, 2), {
+      name: 'metadata.json',
+    });
 
     // Add media files
-    variations.forEach(variation => {
+    variations.forEach((variation) => {
       if (variation.media) {
         if (variation.media.images) {
-          variation.media.images.forEach(image => {
+          variation.media.images.forEach((image) => {
             if (fs.existsSync(image.filepath)) {
               archive.file(image.filepath, { name: `media/${image.filename}` });
             }
@@ -232,26 +259,36 @@ const exportPosts = async (req, res) => {
         }
         if (variation.media.video) {
           if (fs.existsSync(variation.media.video.filepath)) {
-            archive.file(variation.media.video.filepath, { name: `media/${variation.media.video.filename}` });
+            archive.file(variation.media.video.filepath, {
+              name: `media/${variation.media.video.filename}`,
+            });
           }
         }
       }
     });
 
     // Add platform-specific export files
-    const platforms = ['facebook', 'instagram', 'linkedin', 'twitter', 'whatsapp'];
-    platforms.forEach(platform => {
-      const platformData = variations.map(variation => ({
+    const platforms = [
+      'facebook',
+      'instagram',
+      'linkedin',
+      'twitter',
+      'whatsapp',
+    ];
+    platforms.forEach((platform) => {
+      const platformData = variations.map((variation) => ({
         variationId: variation.id,
         platform: platform,
         caption: variation.platforms[platform]?.caption || '',
         hashtags: variation.platforms[platform]?.hashtags || [],
         cta: variation.platforms[platform]?.cta || '',
         characterCount: variation.platforms[platform]?.characterCount || 0,
-        media: variation.media
+        media: variation.media,
       }));
 
-      archive.append(JSON.stringify(platformData, null, 2), { name: `platforms/${platform}.json` });
+      archive.append(JSON.stringify(platformData, null, 2), {
+        name: `platforms/${platform}.json`,
+      });
     });
 
     await archive.finalize();
@@ -259,7 +296,7 @@ const exportPosts = async (req, res) => {
     console.error('Error in exportPosts controller:', error);
     res.status(500).json({
       success: false,
-      error: 'Internal server error while exporting posts'
+      error: 'Internal server error while exporting posts',
     });
   }
 };
@@ -270,13 +307,13 @@ const getPlatformGuidelines = async (req, res) => {
     const guidelines = aiService.getPlatformGuidelines();
     res.json({
       success: true,
-      data: guidelines
+      data: guidelines,
     });
   } catch (error) {
     console.error('Error in getPlatformGuidelines controller:', error);
     res.status(500).json({
       success: false,
-      error: 'Internal server error while fetching guidelines'
+      error: 'Internal server error while fetching guidelines',
     });
   }
 };
@@ -286,5 +323,5 @@ module.exports = {
   regenerateVariation,
   editCaption,
   exportPosts,
-  getPlatformGuidelines
+  getPlatformGuidelines,
 };

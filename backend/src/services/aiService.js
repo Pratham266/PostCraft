@@ -129,7 +129,7 @@ Return the response as a JSON object with this structure:
   ]
 }`;
 
-      console.log('Generating text content...');
+      console.log('Generating text content 132');
       const response = await this.ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
@@ -150,7 +150,7 @@ Return the response as a JSON object with this structure:
   // Generate images using Google GenAI Imagen model
   async generateImages(prompt, variations, postType) {
     try {
-      console.log(`Generating ${variations} image variations using Imagen...`);
+      console.log(`Generated image 153`);
       const results = [];
       const numberOfImages = postType === 'carousel' ? 4 : 1;
 
@@ -199,10 +199,8 @@ Return the response as a JSON object with this structure:
             variationId: i + 1,
             images: variationImages,
           });
-
-          console.log(`Generated images for variation ${i + 1}`);
         } catch (imageError) {
-          console.error(`Error generating image ${i + 1}:`, imageError);
+          console.error(`Error generating image 203`, imageError);
           results.push({
             variationId: i + 1,
             images: [],
@@ -222,9 +220,7 @@ Return the response as a JSON object with this structure:
   // Generate videos using placeholder system (faster for testing)
   async generateVideos(prompt, variations) {
     try {
-      console.log(
-        `Generating ${variations} video variations using Gemini AI...`
-      );
+      console.log(`Generating video 224`);
       const results = [];
 
       for (let i = 1; i <= variations; i++) {
@@ -235,13 +231,15 @@ Return the response as a JSON object with this structure:
             prompt: prompt,
           });
 
+          let count = 1;
           // Poll for completion
           while (!operation.done) {
-            console.log('Waiting for video generation to complete...');
+            console.log(`Processing video 237 => ${count}`);
             await new Promise((resolve) => setTimeout(resolve, 10000));
             operation = await this.ai.operations.getVideosOperation({
               operation: operation,
             });
+            count++;
           }
 
           const videoId = uuidv4();
@@ -269,10 +267,8 @@ Return the response as a JSON object with this structure:
               isPlaceholder: false,
             },
           });
-
-          console.log(`Generated video for variation ${i}`);
         } catch (videoError) {
-          console.error(`Error generating video ${i}:`, videoError);
+          console.error(`Error generating video 271`, videoError);
           results.push({
             variationId: i,
             video: null,
@@ -281,10 +277,9 @@ Return the response as a JSON object with this structure:
         }
       }
 
-      console.log('Video generation completed');
       return results;
     } catch (error) {
-      console.error('Error generating videos:', error);
+      console.error('Error generating videos 282', error);
       throw new Error('Failed to generate videos');
     }
   }
@@ -301,7 +296,7 @@ Return the response as a JSON object with this structure:
         postVariation,
       } = requestData;
 
-      console.log('Starting post generation with:', {
+      console.log('Starting post generation with 299', {
         postIdea,
         postType,
         selectedPlatforms,
@@ -311,7 +306,6 @@ Return the response as a JSON object with this structure:
       });
 
       // Generate text content first (fastest)
-      console.log('Step 1/3: Generating text content...');
       const textContent = await this.generateTextContent(
         postIdea,
         postType,
@@ -324,19 +318,17 @@ Return the response as a JSON object with this structure:
       // Generate media based on post type (using placeholders for speed)
       let mediaContent = [];
       if (postType === 'image' || postType === 'carousel') {
-        console.log('Step 2/3: Generating images...');
+        console.log('Generating images 321');
         mediaContent = await this.generateImages(
           postIdea,
           postVariation,
           postType
         );
       } else if (postType === 'video') {
-        console.log('Step 2/3: Generating videos...');
+        console.log('Generating videos 327');
         mediaContent = await this.generateVideos(postIdea, postVariation);
       }
 
-      // Combine text and media content
-      console.log('Step 3/3: Combining content...');
       console.dir({ result: textContent.variations }, { depth: null });
       const results = textContent.variations.map((variation, index) => {
         const media = mediaContent[index] || {};
@@ -355,7 +347,6 @@ Return the response as a JSON object with this structure:
         };
       });
 
-      console.log('Post generation completed successfully!');
       return {
         success: true,
         data: {
@@ -371,7 +362,7 @@ Return the response as a JSON object with this structure:
         },
       };
     } catch (error) {
-      console.error('Error generating posts:', error);
+      console.error('Error generating posts 365 :', error);
       return {
         success: false,
         error: error.message,

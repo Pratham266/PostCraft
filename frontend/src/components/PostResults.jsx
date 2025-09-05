@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 
-const videoGeneratedPosts = {
+const VideoGeneratedPosts = {
   variations: [
     {
       id: 1,
@@ -564,7 +564,7 @@ const CarouselGeneratedPosts = {
   },
 };
 
-const secondGenetposts = {
+const SecondGenetposts = {
   variations: [
     {
       id: 1,
@@ -653,8 +653,8 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
   const [instagramMediaTab, setInstagramMediaTab] = useState('carousel');
 
   // const generatedPosts = CarouselGeneratedPosts;
-  // const generatedPosts = videoGeneratedPosts;
-  // const generatedPosts = secondGenetposts;
+  // const generatedPosts = VideoGeneratedPosts;
+  // const generatedPosts = SecondGenetposts;
 
   const variations = generatedPosts.variations;
   const currentVariation = variations[selectedVariation];
@@ -760,7 +760,6 @@ const PostResults = ({ generatedPosts, onRegenerate, onExport, isLoading }) => {
 
     // Helper to render media based on postType
     const renderMedia = () => {
-      console.log({ postType, cond: content.media?.images?.length > 1 });
       if (postType === 'carousel' && content.media?.images?.length > 1) {
         return renderCarousel(content.media.images);
       }
