@@ -296,15 +296,6 @@ Return the response as a JSON object with this structure:
         postVariation,
       } = requestData;
 
-      console.log('Starting post generation with 299', {
-        postIdea,
-        postType,
-        selectedPlatforms,
-        category,
-        unifiedStyle,
-        postVariation,
-      });
-
       // Generate text content first (fastest)
       const textContent = await this.generateTextContent(
         postIdea,
@@ -315,49 +306,44 @@ Return the response as a JSON object with this structure:
         postVariation
       );
 
+      return {
+        success: true,
+        message: 'Text content generated successfully',
+        data: {
+          variations: textContent.variations,
+        },
+      };
+    } catch (error) {
+      console.error('Error generating posts 365 :', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  async generateMedia(requestData) {
+    try {
+      const { postIdea, postType } = requestData;
+      const postVariation = 1;
       // Generate media based on post type (using placeholders for speed)
       let mediaContent = [];
       if (postType === 'image' || postType === 'carousel') {
-        console.log('Generating images 321');
         mediaContent = await this.generateImages(
           postIdea,
           postVariation,
           postType
         );
       } else if (postType === 'video') {
-        console.log('Generating videos 327');
         mediaContent = await this.generateVideos(postIdea, postVariation);
       }
-
-      console.dir({ result: textContent.variations }, { depth: null });
-      const results = textContent.variations.map((variation, index) => {
-        const media = mediaContent[index] || {};
-
-        // Add media object to each platform
-        const platformsData = Object.fromEntries(
-          Object.entries(variation.platforms).map(([platform, data]) => [
-            platform,
-            { ...data, media },
-          ])
-        );
-        return {
-          id: variation.id,
-          postType,
-          platforms: platformsData,
-        };
-      });
 
       return {
         success: true,
         data: {
-          variations: results,
-          metadata: {
-            generatedAt: new Date().toISOString(),
-            postType,
-            platforms: selectedPlatforms,
-            category,
-            unifiedStyle,
-            totalVariations: postVariation,
+          msg: 'Media generated successfully',
+          data: {
+            mediaContent,
           },
         },
       };

@@ -139,10 +139,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleRegenerate = async () => {
-    await handleGenerate();
-  };
-
   const handleEdit = async (variationId, platform, data) => {
     try {
       const response = await postsAPI.editCaption(variationId, platform, data);
@@ -521,7 +517,7 @@ const Dashboard = () => {
             /* Post Results */
             <PostResults
               generatedPosts={generatedPosts}
-              onRegenerate={handleRegenerate}
+              onRegenerate={() => {}}
               onEdit={handleEdit}
               onExport={handleExport}
               isLoading={isGenerating}

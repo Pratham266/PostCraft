@@ -4,7 +4,7 @@ export const postsAPI = {
   // Generate posts
   generatePosts: async (data) => {
     try {
-      const response = await api.post('/posts/generate', data);
+      const response = await api.post('/posts/generate-text', data);
       return response.data;
     } catch (error) {
       console.error('Error generating posts:', error);
