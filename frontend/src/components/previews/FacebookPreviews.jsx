@@ -136,7 +136,10 @@ const ShareSVG = () => (
   </svg>
 );
 
-export const FacebookImagePreview = ({ media }) => {
+export const FacebookImagePreview = ({ content }) => {
+  console.log({ content });
+  const images = content?.media[0]?.images || [];
+  console.log({ images });
   return (
     <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Header */}
@@ -157,15 +160,14 @@ export const FacebookImagePreview = ({ media }) => {
 
       {/* Post text */}
       <div className="px-4 pb-3 pt-1 text-gray-900 leading-[1.35]">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lorem Ipsum is that it has a more-or-less normal distribution of
-        letters, as opposed to using 'Content here, content here', making it
-        look like readable English. Many desktop publishing packages and web
-        page editors now use Lorem Ipsum as their default model text, and a
-        search for 'lorem ipsum' will uncover many web sites still in their
-        infancy. Various versions have evolved over the years, sometimes by
-        accident, sometimes on purpose (injected humour and the like).{' '}
+        {content?.caption}
+        <div className="flex flex-wrap gap-1">
+          {content?.hashtags?.map((tag, index) => (
+            <span key={index} className="text-blue-600 ">
+              #{tag.replace('#', '')}
+            </span>
+          ))}
+        </div>
         <span className="text-blue-600 cursor-pointer hover:underline">
           See less
         </span>
@@ -174,7 +176,7 @@ export const FacebookImagePreview = ({ media }) => {
       {/* Image with overlay */}
       <div className="w-full relative">
         <img
-          src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+          src={images[0]?.url}
           alt="NOIR BLUE Unveil Your Enigma"
           className="w-full object-cover"
           style={{ height: 420, objectPosition: 'top' }}
@@ -200,7 +202,9 @@ export const FacebookImagePreview = ({ media }) => {
   );
 };
 
-export const FacebookVideoPreview = ({ media }) => {
+export const FacebookVideoPreview = ({ content }) => {
+  console.log({ content });
+  const video = content?.media[0]?.video;
   return (
     <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Header */}
@@ -221,15 +225,14 @@ export const FacebookVideoPreview = ({ media }) => {
 
       {/* Post text */}
       <div className="px-4 pb-3 pt-1 text-gray-900 leading-[1.35]">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lorem Ipsum is that it has a more-or-less normal distribution of
-        letters, as opposed to using 'Content here, content here', making it
-        look like readable English. Many desktop publishing packages and web
-        page editors now use Lorem Ipsum as their default model text, and a
-        search for 'lorem ipsum' will uncover many web sites still in their
-        infancy. Various versions have evolved over the years, sometimes by
-        accident, sometimes on purpose (injected humour and the like).{' '}
+        {content?.caption}
+        <div className="flex flex-wrap gap-1">
+          {content?.hashtags?.map((tag, index) => (
+            <span key={index} className="text-blue-600 ">
+              #{tag.replace('#', '')}
+            </span>
+          ))}
+        </div>
         <span className="text-blue-600 cursor-pointer hover:underline">
           See less
         </span>
@@ -238,9 +241,9 @@ export const FacebookVideoPreview = ({ media }) => {
       {/* Image with overlay */}
       <div className="w-full relative">
         <video
-          src="https://cdn.pixabay.com/video/2025/08/20/298643_large.mp4"
+          src={video?.url}
           controls
-          poster="https://images.pexels.com/videos/9892797/free-video-9892797.jpg"
+          poster={video?.url}
           className="w-full object-cover"
           style={{ height: 420, objectPosition: 'top' }}
           autoPlay
@@ -269,8 +272,9 @@ export const FacebookVideoPreview = ({ media }) => {
   );
 };
 
-export const FacebookMultipleImagesPreview = ({ media }) => {
-  const mediaListLength = media?.images?.length || 5;
+export const FacebookMultipleImagesPreview = ({ content }) => {
+  const mediaListLength = content?.media[0]?.images?.length || 5;
+  const images = content?.media[0]?.images || [];
   console.log(mediaListLength);
   return (
     <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
@@ -292,15 +296,14 @@ export const FacebookMultipleImagesPreview = ({ media }) => {
 
       {/* Post text */}
       <div className="px-4 pb-3 pt-1 text-gray-900 leading-[1.35]">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lorem Ipsum is that it has a more-or-less normal distribution of
-        letters, as opposed to using 'Content here, content here', making it
-        look like readable English. Many desktop publishing packages and web
-        page editors now use Lorem Ipsum as their default model text, and a
-        search for 'lorem ipsum' will uncover many web sites still in their
-        infancy. Various versions have evolved over the years, sometimes by
-        accident, sometimes on purpose (injected humour and the like).{' '}
+        {content?.caption}
+        <div className="flex flex-wrap gap-1">
+          {content?.hashtags?.map((tag, index) => (
+            <span key={index} className="text-blue-600 ">
+              #{tag.replace('#', '')}
+            </span>
+          ))}
+        </div>
         <span className="text-blue-600 cursor-pointer hover:underline">
           See less
         </span>
@@ -311,12 +314,12 @@ export const FacebookMultipleImagesPreview = ({ media }) => {
         {mediaListLength === 2 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-60 object-cover "
               alt="img2"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[1]?.url}
               class="w-full h-60 object-cover "
               alt="img3"
             />
@@ -325,18 +328,18 @@ export const FacebookMultipleImagesPreview = ({ media }) => {
         {mediaListLength === 3 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-80 object-cover  col-span-1"
               alt="img4"
             />
             <div class="grid gap-1">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[1]?.url}
                 class="w-full h-40 object-cover "
                 alt="img5"
               />
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[2]?.url}
                 class="w-full h-40 object-cover "
                 alt="img6"
               />
@@ -346,22 +349,22 @@ export const FacebookMultipleImagesPreview = ({ media }) => {
         {mediaListLength === 4 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-48 object-cover "
               alt="img7"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[1]?.url}
               class="w-full h-48 object-cover "
               alt="img8"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[2]?.url}
               class="w-full h-48 object-cover "
               alt="img9"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[3]?.url}
               class="w-full h-48 object-cover "
               alt="img10"
             />
@@ -370,23 +373,23 @@ export const FacebookMultipleImagesPreview = ({ media }) => {
         {mediaListLength > 4 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-48 object-cover "
               alt="img11"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[1]?.url}
               class="w-full h-48 object-cover "
               alt="img12"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[2]?.url}
               class="w-full h-48 object-cover "
               alt="img13"
             />
             <div class="relative">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[3]?.url}
                 class="w-full h-48 object-cover "
                 alt="img14"
               />

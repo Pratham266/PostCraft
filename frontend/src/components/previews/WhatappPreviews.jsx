@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 const WhatsAppLogoSVG = () => (
   <svg
@@ -173,7 +173,8 @@ const SignalSVG = () => (
   </svg>
 );
 
-const WhatappImagePreviews = () => {
+const WhatappImagePreviews = ({ content }) => {
+  const images = content?.media[0]?.images || [];
   return (
     <div className="w-[375px] bg-[#0B141A] text-white overflow-hidden rounded-lg">
       {/* Status Bar */}
@@ -217,21 +218,19 @@ const WhatappImagePreviews = () => {
         <div className="flex justify-end mb-4">
           <div className="max-w-xs bg-[#005C4B] rounded-lg p-3 relative">
             <img
-              src="https://images.unsplash.com/photo-1444464666168-49d633b86797?auto=format&fit=crop&w=500&q=80"
+              src={images[0]?.url}
               alt="Perfume advertisement"
               className="w-full rounded-lg mb-2"
             />
             <div className="text-white text-sm leading-relaxed">
-              It is a long established fact that a reader will be distracted by
-              the readable content of a page when looking at its layout. The
-              point of using Lorem Ipsum is that it has a more-or-less normal
-              distribution of letters, as opposed to using 'Content here,
-              content here', making it look like readable English. Many desktop
-              publishing packages and web page editors now use Lorem Ipsum as
-              their default model text, and a search for 'lorem ipsum' will
-              uncover many web sites still in their infancy. Various versions
-              have evolved over the years, sometimes by accident, sometimes on
-              purpose (injected humour and the like).
+              {content?.caption}
+              <div className="flex flex-wrap gap-1">
+                {content?.hashtags?.map((tag, index) => (
+                  <span key={index} className="text-white-600 ">
+                    #{tag.replace('#', '')}
+                  </span>
+                ))}
+              </div>
             </div>
             <div className="flex items-center justify-end mt-2 space-x-1">
               <span className="text-xs text-gray-300">8:38 pm</span>
@@ -259,9 +258,10 @@ const WhatappImagePreviews = () => {
   );
 };
 
-const WhatappVideoPreviews = () => {
-  const [isPlaying, setIsPlaying] = React.useState(false);
-  const videoRef = React.useRef(null);
+const WhatappVideoPreviews = ({ content }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const video = content?.media[0]?.video?.url;
+  const videoRef = useRef(null);
 
   const handlePlayPause = () => {
     if (!videoRef.current) return;
@@ -318,10 +318,10 @@ const WhatappVideoPreviews = () => {
             <div className="relative mb-2">
               <video
                 ref={videoRef}
-                src="https://cdn.pixabay.com/video/2025/08/20/298643_large.mp4"
+                src={video}
                 className="w-full h-full object-cover rounded-lg"
                 style={{ height: 200 }}
-                poster="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=375&q=80"
+                poster={video}
                 controls={false}
               >
                 Your browser does not support the video tag.
@@ -371,16 +371,14 @@ const WhatappVideoPreviews = () => {
               )}
             </div>
             <div className="text-white text-sm leading-relaxed">
-              It is a long established fact that a reader will be distracted by
-              the readable content of a page when looking at its layout. The
-              point of using Lorem Ipsum is that it has a more-or-less normal
-              distribution of letters, as opposed to using 'Content here,
-              content here', making it look like readable English. Many desktop
-              publishing packages and web page editors now use Lorem Ipsum as
-              their default model text, and a search for 'lorem ipsum' will
-              uncover many web sites still in their infancy. Various versions
-              have evolved over the years, sometimes by accident, sometimes on
-              purpose (injected humour and the like).
+              {content?.caption}
+              <div className="flex flex-wrap gap-1">
+                {content?.hashtags?.map((tag, index) => (
+                  <span key={index} className="text-white-600 ">
+                    #{tag.replace('#', '')}
+                  </span>
+                ))}
+              </div>
             </div>
             <div className="flex items-center justify-end mt-2 space-x-1">
               <span className="text-xs text-gray-300">8:39 pm</span>
@@ -408,8 +406,9 @@ const WhatappVideoPreviews = () => {
   );
 };
 
-const WhatappMultipleImagesPreviews = ({ media }) => {
-  const mediaListLength = media?.images?.length || 2;
+const WhatappMultipleImagesPreviews = ({ content }) => {
+  const images = content?.media[0]?.images || [];
+  const mediaListLength = content?.media[0]?.images?.length || 2;
   return (
     <div className="w-[375px] bg-[#0B141A] text-white overflow-hidden rounded-lg">
       {/* Status Bar */}
@@ -454,12 +453,12 @@ const WhatappMultipleImagesPreviews = ({ media }) => {
           {mediaListLength === 2 && (
             <div class="grid grid-cols-2 gap-1">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[0]?.url}
                 class="w-full h-60 object-cover rounded-lg"
                 alt="img2"
               />
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[1]?.url}
                 class="w-full h-60 object-cover rounded-lg"
                 alt="img3"
               />
@@ -468,18 +467,18 @@ const WhatappMultipleImagesPreviews = ({ media }) => {
           {mediaListLength === 3 && (
             <div class="grid grid-cols-2 gap-1">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[0]?.url}
                 class="w-full h-80 object-cover  col-span-1 rounded-lg"
                 alt="img4"
               />
               <div class="grid gap-1">
                 <img
-                  src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                  src={images[1]?.url}
                   class="w-full h-40 object-cover rounded-lg"
                   alt="img5"
                 />
                 <img
-                  src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                  src={images[2]?.url}
                   class="w-full h-40 object-cover rounded-lg"
                   alt="img6"
                 />
@@ -489,22 +488,22 @@ const WhatappMultipleImagesPreviews = ({ media }) => {
           {mediaListLength === 4 && (
             <div class="grid grid-cols-2 gap-1">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[0]?.url}
                 class="w-full h-48 object-cover rounded-lg"
                 alt="img7"
               />
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[1]?.url}
                 class="w-full h-48 object-cover rounded-lg"
                 alt="img8"
               />
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[2]?.url}
                 class="w-full h-48 object-cover rounded-lg"
                 alt="img9"
               />
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[3]?.url}
                 class="w-full h-48 object-cover rounded-lg"
                 alt="img10"
               />
@@ -513,23 +512,23 @@ const WhatappMultipleImagesPreviews = ({ media }) => {
           {mediaListLength > 4 && (
             <div class="grid grid-cols-2 gap-1">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[0]?.url}
                 class="w-full h-48 object-cover rounded-lg"
                 alt="img11"
               />
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[1]?.url}
                 class="w-full h-48 object-cover rounded-lg"
                 alt="img12"
               />
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[2]?.url}
                 class="w-full h-48 object-cover rounded-lg"
                 alt="img13"
               />
               <div class="relative">
                 <img
-                  src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                  src={images[3]?.url}
                   class="w-full h-48 object-cover rounded-lg  "
                   alt="img14"
                 />
@@ -542,16 +541,14 @@ const WhatappMultipleImagesPreviews = ({ media }) => {
           )}
           <div className="flex justify-end mb-4 mt-2">
             <div className="text-white text-sm">
-              It is a long established fact that a reader will be distracted by
-              the readable content of a page when looking at its layout. The
-              point of using Lorem Ipsum is that it has a more-or-less normal
-              distribution of letters, as opposed to using 'Content here,
-              content here', making it look like readable English. Many desktop
-              publishing packages and web page editors now use Lorem Ipsum as
-              their default model text, and a search for 'lorem ipsum' will
-              uncover many web sites still in their infancy. Various versions
-              have evolved over the years, sometimes by accident, sometimes on
-              purpose (injected humour and the like).
+              {content?.caption}
+              <div className="flex flex-wrap gap-1">
+                {content?.hashtags?.map((tag, index) => (
+                  <span key={index} className="text-white-600 ">
+                    #{tag.replace('#', '')}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-end mt-2 space-x-1">

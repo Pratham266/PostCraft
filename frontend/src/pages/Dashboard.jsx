@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '../components/ui/button';
 import PostResults from '../components/PostResults';
@@ -6,6 +6,34 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { postsAPI } from '../lib/api/posts';
 import platforms from '../utils/static/platforms.jsx';
 import categories from '../utils/static/category.js';
+import { io } from 'socket.io-client';
+
+/**
+ * Adds a media object to every platform in a post variation.
+ * @param {Object} postVariation - The post variation object containing platforms.
+ * @param {Object} media - The media object to add (e.g., { url: "...", type: "image" }).
+ * @returns {Object} A new post variation object with media added to each platform.
+ */
+function addMediaToAllPlatforms(postVariation, media) {
+  if (!postVariation || !postVariation.platforms) return postVariation;
+  const newPlatforms = {};
+  for (const platform in postVariation.platforms) {
+    if (
+      Object.prototype.hasOwnProperty.call(postVariation.platforms, platform)
+    ) {
+      newPlatforms[platform] = {
+        ...postVariation.platforms[platform],
+        media: media,
+      };
+    }
+  }
+  return {
+    ...postVariation,
+    platforms: newPlatforms,
+  };
+}
+
+const socket = io('http://localhost:3001');
 
 const Dashboard = () => {
   const { user } = useSelector((state) => state.user);
@@ -16,11 +44,37 @@ const Dashboard = () => {
   const [unifiedStyle, setUnifiedStyle] = useState(false);
   // const [postVariation, setPostVariation] = useState(1);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [generatedCaptions, setGeneratedCaptions] = useState(null);
+  const [generatedMedia, setGeneratedMedia] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPosts, setGeneratedPosts] = useState(null);
   const [error, setError] = useState(null);
 
   const postVariation = 1;
+
+  useEffect(() => {
+    // Listen for messages
+    socket.on('receive_media', (data) => {
+      setGeneratedMedia(data?.data?.data?.mediaContent);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      socket.off('receive_media');
+    };
+  }, []);
+
+  useEffect(() => {
+    if (generatedCaptions && generatedMedia) {
+      const combinedData = addMediaToAllPlatforms(
+        generatedCaptions?.variations[0],
+        generatedMedia
+      );
+
+      console.log({ combinedData });
+      setGeneratedPosts({ variations: [combinedData] });
+    }
+  }, [generatedCaptions, generatedMedia]);
 
   const postTypes = [
     {
@@ -98,7 +152,7 @@ const Dashboard = () => {
     setSelectedPlatforms([]);
   };
 
-  const handleGenerate = async () => {
+  const handleGenerateCaptions = async () => {
     if (!postIdea.trim()) {
       setError('Please enter a post idea');
       return;
@@ -124,10 +178,41 @@ const Dashboard = () => {
       });
 
       if (response.success) {
-        setGeneratedPosts(response.data);
+        setGeneratedCaptions(response.data);
       } else {
         setError(response.error || 'Failed to generate posts');
       }
+    } catch (error) {
+      console.error('Error generating posts:', error);
+      setError(
+        error.response?.data?.error ||
+          'Failed to generate posts. Please try again.'
+      );
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleGenerateMedia = async () => {
+    if (!postIdea.trim()) {
+      setError('Please enter a post idea');
+      return;
+    }
+
+    if (selectedPlatforms.length === 0) {
+      setError('Please select at least one platform');
+      return;
+    }
+
+    setIsGenerating(true);
+    setError(null);
+    setGeneratedPosts(null);
+
+    try {
+      await postsAPI.generateMedia({
+        postIdea,
+        postType,
+      });
     } catch (error) {
       console.error('Error generating posts:', error);
       setError(
@@ -190,6 +275,7 @@ const Dashboard = () => {
       setError('Failed to export posts. Please try again.');
     }
   };
+  console.log({ generatedCaptions, generatedMedia, generatedPosts });
 
   return (
     <>
@@ -493,7 +579,10 @@ const Dashboard = () => {
                 {/* Generate Button */}
                 <div className="pt-4">
                   <Button
-                    onClick={handleGenerate}
+                    onClick={() => {
+                      handleGenerateCaptions();
+                      handleGenerateMedia();
+                    }}
                     disabled={
                       isGenerating ||
                       !postIdea.trim() ||
@@ -521,6 +610,7 @@ const Dashboard = () => {
               onEdit={handleEdit}
               onExport={handleExport}
               isLoading={isGenerating}
+              postType={postType}
             />
           )}
         </div>

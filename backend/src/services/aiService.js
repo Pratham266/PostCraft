@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { uploadFile } = require('./uploadFile');
+const { io } = require('../app');
 
 class AIService {
   constructor() {
@@ -152,7 +153,7 @@ Return the response as a JSON object with this structure:
     try {
       console.log(`Generated image 153`);
       const results = [];
-      const numberOfImages = postType === 'carousel' ? 4 : 1;
+      const numberOfImages = postType === 'carousel' ? 2 : 1;
 
       // Ensure uploads directory exists
       const uploadsDir = path.join(process.cwd(), 'uploads');
@@ -173,6 +174,7 @@ Return the response as a JSON object with this structure:
 
           const variationImages = [];
           let idx = 1;
+
           for (const generatedImage of response.generatedImages) {
             let imgBytes = generatedImage.image.imageBytes;
             const buffer = Buffer.from(imgBytes, 'base64');
@@ -191,7 +193,7 @@ Return the response as a JSON object with this structure:
               url: link, // Google Drive link
               isPlaceholder: false,
             });
-
+            console.dir({ variationImages }, { depth: null });
             idx++;
           }
 
@@ -245,6 +247,7 @@ Return the response as a JSON object with this structure:
           const videoId = uuidv4();
           const filename = `video_${videoId}.mp4`;
 
+          console.dir({ operation }, { depth: null });
           // Download the generated video.
           await this.ai.files.download({
             file: operation.response.generatedVideos[0].video,
@@ -297,20 +300,116 @@ Return the response as a JSON object with this structure:
       } = requestData;
 
       // Generate text content first (fastest)
-      const textContent = await this.generateTextContent(
-        postIdea,
-        postType,
-        selectedPlatforms,
-        category,
-        unifiedStyle,
-        postVariation
-      );
+      // const textContent = await this.generateTextContent(
+      //   postIdea,
+      //   postType,
+      //   selectedPlatforms,
+      //   category,
+      //   unifiedStyle,
+      //   postVariation
+      // );
 
+      // return {
+      //   success: true,
+      //   message: 'Text content generated successfully',
+      //   data: {
+      //     variations: textContent.variations,
+      //   },
+      // };
       return {
         success: true,
         message: 'Text content generated successfully',
         data: {
-          variations: textContent.variations,
+          variations: [
+            {
+              id: 1,
+              platforms: {
+                facebook: {
+                  caption:
+                    "As we bid a heartfelt farewell to our beloved Bappa today, our hearts are filled with gratitude for his blessings and the joy he brought. May his presence continue to guide us until we welcome him again next year! 🙏 What's your favorite memory from Ganesh Chaturthi this year?",
+                  hashtags: [
+                    '#GaneshVisarjan',
+                    '#GanpatiBappaMorya',
+                    '#FarewellBappa',
+                    '#GaneshChaturthi',
+                    '#FestiveVibes',
+                    '#CommunityLove',
+                    '#Blessings',
+                    '#UntilNextYear',
+                    '#HinduFestival',
+                    '#IndianCulture',
+                  ],
+                  cta: 'Share your favorite memory in the comments below!',
+                  characterCount: 286,
+                },
+                instagram: {
+                  caption:
+                    "With heavy hearts and hopeful spirits, we bid adieu to our beloved Lord Ganesha. ✨ The echoes of 'Ganpati Bappa Morya, Pudhchya Varshi Lavkar Ya' fill the air, promising his return. May his blessings light up your path until then! 🙏",
+                  hashtags: [
+                    '#GaneshVisarjan',
+                    '#GanpatiBappaMorya',
+                    '#PudhchyaVarshiLavkarYa',
+                    '#GaneshChaturthi',
+                    '#FestiveFarewell',
+                    '#Devotion',
+                    '#Hinduism',
+                    '#IndianTradition',
+                    '#Blessings',
+                    '#SpiritualJourney',
+                    '#CulturalHeritage',
+                    '#Bappa',
+                    '#LordGanesha',
+                    '#FestivalOfIndia',
+                    '#GoodVibes',
+                    '#UntilNextYear',
+                    '#Faith',
+                    '#Love',
+                    '#Peace',
+                  ],
+                  cta: "Tap ❤️ if you'll miss Bappa!",
+                  characterCount: 353,
+                },
+                linkedin: {
+                  caption:
+                    "Today marks Ganesh Visarjan, the culmination of the Ganesh Chaturthi festival, where we respectfully bid farewell to Lord Ganesha. This tradition, deeply rooted in cultural and spiritual significance, emphasizes themes of impermanence, renewal, and community solidarity. It's a powerful reminder of how cultural celebrations foster unity and collective well-being. Wishing everyone peace and prosperity.",
+                  hashtags: [
+                    '#GaneshVisarjan',
+                    '#CulturalHeritage',
+                    '#CommunityEngagement',
+                    '#IndianFestivals',
+                    '#Tradition',
+                  ],
+                  cta: 'What cultural traditions inspire you?',
+                  characterCount: 395,
+                },
+                twitter: {
+                  caption:
+                    'Bidding a heartfelt farewell to our beloved Bappa on Ganesh Visarjan. 🙏 May his blessings stay with us until he returns next year! Ganpati Bappa Morya! #GaneshVisarjan #GanpatiBappaMorya #FarewellBappa',
+                  hashtags: [
+                    '#GaneshVisarjan',
+                    '#GanpatiBappaMorya',
+                    '#FarewellBappa',
+                    '#GaneshChaturthi',
+                    '#India',
+                  ],
+                  cta: 'Tweet your favorite Bappa memory!',
+                  characterCount: 232,
+                },
+                whatsapp: {
+                  caption:
+                    'As we bid adieu to our beloved Bappa today, wishing you all peace, prosperity, and blessings! 🙏 May his divine presence always guide us. Ganpati Bappa Morya, Pudhchya Varshi Lavkar Ya! ✨🏡',
+                  hashtags: [
+                    '#GaneshVisarjan',
+                    '#GanpatiBappaMorya',
+                    '#Blessings',
+                    '#Festival',
+                  ],
+                  cta: 'Share this message with your loved ones!',
+                  characterCount: 202,
+                },
+              },
+            },
+          ],
         },
       };
     } catch (error) {
@@ -322,23 +421,65 @@ Return the response as a JSON object with this structure:
     }
   }
 
-  async generateMedia(requestData) {
+  async generateMedia(requestData, io = null) {
     try {
       const { postIdea, postType } = requestData;
       const postVariation = 1;
       // Generate media based on post type (using placeholders for speed)
       let mediaContent = [];
       if (postType === 'image' || postType === 'carousel') {
-        mediaContent = await this.generateImages(
-          postIdea,
-          postVariation,
-          postType
-        );
+        // mediaContent = await this.generateImages(
+        //   postIdea,
+        //   postVariation,
+        //   postType
+        // );
+        if (postType === 'carousel') {
+          mediaContent = [
+            {
+              variationId: 1,
+              images: [
+                {
+                  filename: 'image_fbf1d97c-2ca6-4a58-b52a-9b9c8761b86c.png',
+                  url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1757323895/AiPostCraft/image_fbf1d97c-2ca6-4a58-b52a-9b9c8761b86c.png',
+                  isPlaceholder: false,
+                },
+                {
+                  filename: 'image_0a35e139-158d-4ce6-b0fe-207b457b1902.png',
+                  url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1757323902/AiPostCraft/image_0a35e139-158d-4ce6-b0fe-207b457b1902.png',
+                  isPlaceholder: false,
+                },
+              ],
+            },
+          ];
+        } else {
+          mediaContent = [
+            {
+              variationId: 1,
+              images: [
+                {
+                  filename: 'image_15416c41-1dda-4b4d-8919-cabb6b0ffc1e.png',
+                  url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1757258383/AiPostCraft/image_15416c41-1dda-4b4d-8919-cabb6b0ffc1e.png',
+                  isPlaceholder: false,
+                },
+              ],
+            },
+          ];
+        }
       } else if (postType === 'video') {
-        mediaContent = await this.generateVideos(postIdea, postVariation);
+        // mediaContent = await this.generateVideos(postIdea, postVariation);
+        mediaContent = [
+          {
+            variationId: 1,
+            video: {
+              filename: 'video_b86f0930-bb09-43f9-bb61-ea8567ed8045.mp4',
+              url: 'https://res.cloudinary.com/dsmk1zmjv/video/upload/v1757260132/AiPostCraft/video_b86f0930-bb09-43f9-bb61-ea8567ed8045.mp4',
+              isPlaceholder: false,
+            },
+          },
+        ];
       }
 
-      return {
+      io.emit('receive_media', {
         success: true,
         data: {
           msg: 'Media generated successfully',
@@ -346,7 +487,8 @@ Return the response as a JSON object with this structure:
             mediaContent,
           },
         },
-      };
+      });
+      return;
     } catch (error) {
       console.error('Error generating posts 365 :', error);
       return {

@@ -171,7 +171,8 @@ const PauseButtonSVG = () => (
   </svg>
 );
 
-const LinkedinImagePreview = () => {
+const LinkedinImagePreview = ({ content }) => {
+  const images = content?.media[0]?.images || [];
   return (
     <div className="w-[552px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
       {/* Header */}
@@ -194,15 +195,14 @@ const LinkedinImagePreview = () => {
 
       {/* Post text */}
       <div className="px-4 pb-3 text-gray-900 leading-relaxed">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lorem Ipsum is that it has a more-or-less normal distribution of
-        letters, as opposed to using 'Content here, content here', making it
-        look like readable English. Many desktop publishing packages and web
-        page editors now use Lorem Ipsum as their default model text, and a
-        search for 'lorem ipsum' will uncover many web sites still in their
-        infancy. Various versions have evolved over the years, sometimes by
-        accident, sometimes on purpose (injected humour anc{' '}
+        {content?.caption}
+        <div className="flex flex-wrap gap-1">
+          {content?.hashtags?.map((tag, index) => (
+            <span key={index} className="text-blue-600 ">
+              #{tag.replace('#', '')}
+            </span>
+          ))}
+        </div>
         <span className="text-blue-600 cursor-pointer hover:underline">
           see less
         </span>
@@ -211,7 +211,7 @@ const LinkedinImagePreview = () => {
       {/* Image */}
       <div className="w-full">
         <img
-          src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=552&q=80"
+          src={images[0]?.url}
           alt="CASSIS NOIR Rose Dusk Perfume"
           className="w-full object-cover"
           style={{ height: 400 }}
@@ -245,8 +245,9 @@ const LinkedinImagePreview = () => {
   );
 };
 
-const LinkedinMultiPreview = ({ media }) => {
-  const mediaListLength = media?.images?.length || 5;
+const LinkedinMultiPreview = ({ content }) => {
+  const mediaListLength = content?.media[0]?.images?.length || 5;
+  const images = content?.media[0]?.images || [];
   return (
     <div className="w-[552px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
       {/* Header */}
@@ -269,11 +270,16 @@ const LinkedinMultiPreview = ({ media }) => {
 
       {/* Post text */}
       <div className="px-4 pb-3 text-gray-900 leading-relaxed">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lc...{' '}
-        <span className="text-gray-500 cursor-pointer hover:underline">
-          see more
+        {content?.caption}
+        <div className="flex flex-wrap gap-1">
+          {content?.hashtags?.map((tag, index) => (
+            <span key={index} className="text-blue-600 ">
+              #{tag.replace('#', '')}
+            </span>
+          ))}
+        </div>
+        <span className="text-blue-600 cursor-pointer hover:underline">
+          see less
         </span>
       </div>
 
@@ -282,12 +288,12 @@ const LinkedinMultiPreview = ({ media }) => {
         {mediaListLength === 2 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-60 object-cover "
               alt="img2"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[1]?.url}
               class="w-full h-60 object-cover "
               alt="img3"
             />
@@ -296,18 +302,18 @@ const LinkedinMultiPreview = ({ media }) => {
         {mediaListLength === 3 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-80 object-cover  col-span-1"
               alt="img4"
             />
             <div class="grid gap-1">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[1]?.url}
                 class="w-full h-40 object-cover "
                 alt="img5"
               />
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[2]?.url}
                 class="w-full h-40 object-cover "
                 alt="img6"
               />
@@ -317,22 +323,22 @@ const LinkedinMultiPreview = ({ media }) => {
         {mediaListLength === 4 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-48 object-cover "
               alt="img7"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[1]?.url}
               class="w-full h-48 object-cover "
               alt="img8"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[2]?.url}
               class="w-full h-48 object-cover "
               alt="img9"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[3]?.url}
               class="w-full h-48 object-cover "
               alt="img10"
             />
@@ -341,23 +347,23 @@ const LinkedinMultiPreview = ({ media }) => {
         {mediaListLength > 4 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-48 object-cover "
               alt="img11"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[1]?.url}
               class="w-full h-48 object-cover "
               alt="img12"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[2]?.url}
               class="w-full h-48 object-cover "
               alt="img13"
             />
             <div class="relative">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[3]?.url}
                 class="w-full h-48 object-cover "
                 alt="img14"
               />
@@ -397,7 +403,8 @@ const LinkedinMultiPreview = ({ media }) => {
   );
 };
 
-const LinkedinVideoPreview = () => {
+const LinkedinVideoPreview = ({ content }) => {
+  const video = content?.media[0]?.video?.url;
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -433,11 +440,16 @@ const LinkedinVideoPreview = () => {
 
       {/* Post text */}
       <div className="px-4 pb-3 text-gray-900 leading-relaxed">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lc...{' '}
-        <span className="text-gray-500 cursor-pointer hover:underline">
-          see more
+        {content?.caption}
+        <div className="flex flex-wrap gap-1">
+          {content?.hashtags?.map((tag, index) => (
+            <span key={index} className="text-blue-600 ">
+              #{tag.replace('#', '')}
+            </span>
+          ))}
+        </div>
+        <span className="text-blue-600 cursor-pointer hover:underline">
+          see less
         </span>
       </div>
 
@@ -445,8 +457,8 @@ const LinkedinVideoPreview = () => {
       <div className="w-full relative">
         <video
           ref={videoRef}
-          src="https://cdn.pixabay.com/video/2025/08/20/298643_large.mp4"
-          poster="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=552&q=80"
+          src={video}
+          poster={video}
           className="w-full object-cover"
           style={{ height: 400 }}
           controls={false}

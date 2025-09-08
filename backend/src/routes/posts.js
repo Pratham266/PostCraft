@@ -8,6 +8,6 @@ router.use(authenticateToken);
 
 // Generate AI-powered posts
 router.post('/generate-text', postController.generatePosts);
-router.post('/generate-media', postController.generatePosts);
+router.post('/generate-media', postController.generateMedia);
 
 module.exports = router;

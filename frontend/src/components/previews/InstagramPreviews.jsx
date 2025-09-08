@@ -212,7 +212,8 @@ const MusicNoteSVG = () => (
   </svg>
 );
 
-export const InstagramImagePreview = () => {
+export const InstagramImagePreview = ({ content }) => {
+  const images = content?.media[0]?.images || [];
   return (
     <div className="w-[375px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
       {/* Header */}
@@ -229,7 +230,7 @@ export const InstagramImagePreview = () => {
       {/* Image */}
       <div className="w-full relative">
         <img
-          src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+          src={images[0]?.url}
           alt="NOIR BLUE Perfume"
           className="w-full object-cover"
           style={{ height: 375 }}
@@ -259,9 +260,14 @@ export const InstagramImagePreview = () => {
         <div className="text-sm">
           <span className="font-semibold text-black">instagram</span>{' '}
           <span className="text-black">
-            It is a long established fact that a reader will be distracted by
-            the readable content of a page when looking at its layout. The point
-            ...{' '}
+            {content?.caption}
+            <div className="flex flex-wrap gap-1">
+              {content?.hashtags?.map((tag, index) => (
+                <span key={index} className="text-blue-600 ">
+                  #{tag.replace('#', '')}
+                </span>
+              ))}
+            </div>
           </span>
           <span className="text-gray-500">more</span>
         </div>
@@ -277,15 +283,17 @@ export const InstagramImagePreview = () => {
   );
 };
 
-export const InstagramMultipleImagesPreview = () => {
+export const InstagramMultipleImagesPreview = ({ content }) => {
   // Example images array (replace with props/media if needed)
-  const images = [
-    'https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg',
-    'https://cdn.pixabay.com/photo/2025/08/21/09/51/rouen-cathedral-9787080_1280.jpg',
-    'https://cdn.pixabay.com/photo/2025/08/17/22/55/samarkand-9780493_1280.jpg',
-    'https://cdn.pixabay.com/photo/2025/06/26/16/05/building-9682225_1280.jpg',
-    'https://cdn.pixabay.com/photo/2025/08/01/18/44/roller-coaster-9749194_1280.jpg',
-  ];
+  const images = content?.media[0]?.images.map((image) => image.url);
+  // const images = [
+  //   'https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg',
+  //   'https://cdn.pixabay.com/photo/2025/08/21/09/51/rouen-cathedral-9787080_1280.jpg',
+  //   'https://cdn.pixabay.com/photo/2025/08/17/22/55/samarkand-9780493_1280.jpg',
+  //   'https://cdn.pixabay.com/photo/2025/06/26/16/05/building-9682225_1280.jpg',
+  //   'https://cdn.pixabay.com/photo/2025/08/01/18/44/roller-coaster-9749194_1280.jpg',
+  // ];
+
   const [current, setCurrent] = useState(0);
 
   const goPrev = () => {
@@ -384,9 +392,14 @@ export const InstagramMultipleImagesPreview = () => {
         <div className="text-sm">
           <span className="font-semibold text-black">instagram</span>{' '}
           <span className="text-black">
-            It is a long established fact that a reader will be distracted by
-            the readable content of a page when looking at its layout. The point
-            ...{' '}
+            {content?.caption}
+            <div className="flex flex-wrap gap-1">
+              {content?.hashtags?.map((tag, index) => (
+                <span key={index} className="text-blue-600 ">
+                  #{tag.replace('#', '')}
+                </span>
+              ))}
+            </div>
           </span>
           <span className="text-gray-500">more</span>
         </div>
@@ -402,10 +415,11 @@ export const InstagramMultipleImagesPreview = () => {
   );
 };
 
-export const InstagramVideoPreview = () => {
+export const InstagramVideoPreview = ({ content }) => {
   // Use React hooks at the top level of the component
   const [isPlaying, setIsPlaying] = React.useState(false);
   const videoRef = React.useRef(null);
+  const video = content?.media[0]?.video?.url;
 
   const handlePlayPause = () => {
     if (!videoRef.current) return;
@@ -445,10 +459,10 @@ export const InstagramVideoPreview = () => {
       <div className="w-full relative bg-black" style={{ height: 500 }}>
         <video
           ref={videoRef}
-          src="https://cdn.pixabay.com/video/2025/08/20/298643_large.mp4"
+          src={video}
           className="w-full h-full object-cover"
           style={{ height: 500 }}
-          poster="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=375&q=80"
+          poster={video}
           controls={false}
         >
           Your browser does not support the video tag.
@@ -521,9 +535,14 @@ export const InstagramVideoPreview = () => {
         <div className="text-sm mb-2">
           <span className="font-semibold text-white">instagram</span>{' '}
           <span className="text-white">
-            It is a long established fact that a reader will be distracted by
-            the readable content of a page when looking at its layout. The point
-            ...
+            {content?.caption}
+            <div className="flex flex-wrap gap-1">
+              {content?.hashtags?.map((tag, index) => (
+                <span key={index} className="text-blue-600 ">
+                  #{tag.replace('#', '')}
+                </span>
+              ))}
+            </div>
           </span>
         </div>
 

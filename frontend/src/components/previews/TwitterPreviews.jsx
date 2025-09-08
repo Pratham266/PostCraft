@@ -133,7 +133,8 @@ const PauseButtonSVG = () => (
   </svg>
 );
 
-const TwitterImagePreview = () => {
+const TwitterImagePreview = ({ content }) => {
+  const images = content?.media[0]?.images || [];
   return (
     <div className="w-[500px] bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
@@ -152,16 +153,20 @@ const TwitterImagePreview = () => {
 
       {/* Post text */}
       <div className="px-4 pb-3 text-gray-900 leading-relaxed">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lorem Ipsum is that it has a more-or-less normal distribution of
-        letters, as opposed to using 'Content here, content here', making it lo
+        {content?.caption}
+        <div className="flex flex-wrap gap-1">
+          {content?.hashtags?.map((tag, index) => (
+            <span key={index} className="text-blue-600 ">
+              #{tag.replace('#', '')}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* Image */}
       <div className="w-full relative">
         <img
-          src="https://images.unsplash.com/photo-1444464666168-49d633b86797?auto=format&fit=crop&w=500&q=80"
+          src={images[0]?.url}
           alt="European Robin on tree branch"
           className="w-full object-cover rounded-lg"
           style={{ height: 300 }}
@@ -192,8 +197,9 @@ const TwitterImagePreview = () => {
   );
 };
 
-const TwitterMultiImagesPreview = ({ media }) => {
-  const mediaListLength = media?.images?.length || 5;
+const TwitterMultiImagesPreview = ({ content }) => {
+  const mediaListLength = content?.media[0]?.images?.length || 5;
+  const images = content?.media[0]?.images || [];
 
   return (
     <div className="w-[500px] bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
@@ -213,10 +219,14 @@ const TwitterMultiImagesPreview = ({ media }) => {
 
       {/* Post text */}
       <div className="px-4 pb-3 text-gray-900 leading-relaxed">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lorem Ipsum is that it has a more-or-less normal distribution of
-        letters, as opposed to using 'Content here, content here', making it lo
+        {content?.caption}
+        <div className="flex flex-wrap gap-1">
+          {content?.hashtags?.map((tag, index) => (
+            <span key={index} className="text-blue-600 ">
+              #{tag.replace('#', '')}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* Multiple Images */}
@@ -224,12 +234,12 @@ const TwitterMultiImagesPreview = ({ media }) => {
         {mediaListLength === 2 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-60 object-cover rounded-lg"
               alt="img2"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[1]?.url}
               class="w-full h-60 object-cover rounded-lg"
               alt="img3"
             />
@@ -238,18 +248,18 @@ const TwitterMultiImagesPreview = ({ media }) => {
         {mediaListLength === 3 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-80 object-cover  col-span-1 rounded-lg"
               alt="img4"
             />
             <div class="grid gap-1">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[1]?.url}
                 class="w-full h-40 object-cover rounded-lg"
                 alt="img5"
               />
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[2]?.url}
                 class="w-full h-40 object-cover rounded-lg"
                 alt="img6"
               />
@@ -259,22 +269,22 @@ const TwitterMultiImagesPreview = ({ media }) => {
         {mediaListLength === 4 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-48 object-cover rounded-lg"
               alt="img7"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[1]?.url}
               class="w-full h-48 object-cover rounded-lg"
               alt="img8"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[2]?.url}
               class="w-full h-48 object-cover rounded-lg"
               alt="img9"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[3]?.url}
               class="w-full h-48 object-cover rounded-lg"
               alt="img10"
             />
@@ -283,23 +293,23 @@ const TwitterMultiImagesPreview = ({ media }) => {
         {mediaListLength > 4 && (
           <div class="grid grid-cols-2 gap-1">
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[0]?.url}
               class="w-full h-48 object-cover rounded-lg"
               alt="img11"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[1]?.url}
               class="w-full h-48 object-cover rounded-lg"
               alt="img12"
             />
             <img
-              src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+              src={images[2]?.url}
               class="w-full h-48 object-cover rounded-lg"
               alt="img13"
             />
             <div class="relative">
               <img
-                src="https://images.pexels.com/photos/31009096/pexels-photo-31009096.jpeg"
+                src={images[3]?.url}
                 class="w-full h-48 object-cover rounded-lg  "
                 alt="img14"
               />
@@ -336,7 +346,8 @@ const TwitterMultiImagesPreview = ({ media }) => {
   );
 };
 
-const TwitterVideoPreview = () => {
+const TwitterVideoPreview = ({ content }) => {
+  const video = content?.media[0]?.video?.url;
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -368,18 +379,22 @@ const TwitterVideoPreview = () => {
 
       {/* Post text */}
       <div className="px-4 pb-3 text-gray-900 leading-relaxed">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lorem Ipsum is that it has a more-or-less normal distribution of
-        letters, as opposed to using 'Content here, content here', making it lo
+        {content?.caption}
+        <div className="flex flex-wrap gap-1">
+          {content?.hashtags?.map((tag, index) => (
+            <span key={index} className="text-blue-600 ">
+              #{tag.replace('#', '')}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* Video */}
       <div className="w-full px-4 pb-3 relative">
         <video
           ref={videoRef}
-          src="https://cdn.pixabay.com/video/2025/08/20/298643_large.mp4"
-          poster="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=552&q=80"
+          src={video}
+          poster={video}
           className="w-full object-cover rounded-lg"
           style={{ height: 350 }}
           controls={false}

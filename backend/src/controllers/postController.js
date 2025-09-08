@@ -94,6 +94,17 @@ const generatePosts = async (req, res) => {
   }
 };
 
+const generateMedia = async (req, res) => {
+  try {
+    const { postIdea, postType } = req.body;
+    const { io } = require('../app');
+    await aiService.generateMedia({ postIdea, postType }, io);
+  } catch (error) {
+    console.error('Error in generateMedia controller:', error);
+  }
+};
+
 module.exports = {
   generatePosts,
+  generateMedia,
 };

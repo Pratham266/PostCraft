@@ -12,6 +12,16 @@ export const postsAPI = {
     }
   },
 
+  // Generate Medai
+  generateMedia: async (data) => {
+    try {
+      await api.post('/posts/generate-media', data);
+    } catch (error) {
+      console.error('Error generating posts:', error);
+      throw error;
+    }
+  },
+
   // Regenerate a specific variation
   regenerateVariation: async (variationId, data) => {
     try {

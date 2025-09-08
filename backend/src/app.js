@@ -3,12 +3,33 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const { connectDB } = require('./utils/database');
+const { Server } = require('socket.io');
+const http = require('http');
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+const server = http.createServer(app);
+
+// ✅ Setup socket.io server
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173', // React app URL
+    methods: ['GET', 'POST'],
+  },
+});
+
+// ✅ Socket connection
+io.on('connection', (socket) => {
+  console.log('🔌 User connected:', socket.id);
+
+  socket.on('disconnect', () => {
+    console.log('❌ User disconnected:', socket.id);
+  });
+});
 
 // Middleware
 app.use(cors());
@@ -45,7 +66,7 @@ app.use('*', (req, res) => {
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     });
@@ -57,4 +78,4 @@ const startServer = async () => {
 
 startServer();
 
-module.exports = app;
+module.exports = { app, server, io };
