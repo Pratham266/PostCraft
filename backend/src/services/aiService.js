@@ -448,6 +448,16 @@ Return the response as a JSON object with this structure:
                   url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1757323902/AiPostCraft/image_0a35e139-158d-4ce6-b0fe-207b457b1902.png',
                   isPlaceholder: false,
                 },
+                {
+                  filename: 'image_49230c11-72bb-4526-a26d-c0e3d01a96ee.png',
+                  url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1757323300/AiPostCraft/image_49230c11-72bb-4526-a26d-c0e3d01a96ee.png',
+                  isPlaceholder: false,
+                },
+                {
+                  filename: 'image_a4a5f7f3-539f-490d-a07e-9dd19808ad8a.png',
+                  url: 'https://res.cloudinary.com/dsmk1zmjv/image/upload/v1757323297/AiPostCraft/image_a4a5f7f3-539f-490d-a07e-9dd19808ad8a.png',
+                  isPlaceholder: false,
+                },
               ],
             },
           ];
@@ -488,7 +498,10 @@ Return the response as a JSON object with this structure:
           },
         },
       });
-      return;
+      return {
+        success: true,
+        message: 'Media generated wait for the socket response',
+      };
     } catch (error) {
       console.error('Error generating posts 365 :', error);
       return {

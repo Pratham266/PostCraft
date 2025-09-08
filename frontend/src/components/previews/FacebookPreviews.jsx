@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FacebookSVG = () => (
+export const FacebookSVG = () => (
   <svg
     width="48"
     height="48"
@@ -137,9 +137,8 @@ const ShareSVG = () => (
 );
 
 export const FacebookImagePreview = ({ content }) => {
-  console.log({ content });
   const images = content?.media[0]?.images || [];
-  console.log({ images });
+
   return (
     <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Header */}

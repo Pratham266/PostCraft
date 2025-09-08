@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Previews from './pages/Previews';
+import Library from './pages/Library';
 
 // Component to handle initial app setup
 const AppInitializer = ({ children }) => {
@@ -50,7 +51,9 @@ function App() {
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <Layout>
+                    <Dashboard />
+                  </Layout>
                 </ProtectedRoute>
               }
             />
@@ -60,6 +63,16 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <About />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/library"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Library />
                   </Layout>
                 </ProtectedRoute>
               }

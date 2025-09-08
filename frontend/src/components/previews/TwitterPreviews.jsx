@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 
-const TwitterLogoSVG = () => (
-  <div className="h-32 w-32">
+export const TwitterLogoSVG = () => (
+  <div className="">
     <svg
       width="48"
       height="48"
@@ -136,7 +136,7 @@ const PauseButtonSVG = () => (
 const TwitterImagePreview = ({ content }) => {
   const images = content?.media[0]?.images || [];
   return (
-    <div className="w-[500px] bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-3 ">
@@ -202,7 +202,7 @@ const TwitterMultiImagesPreview = ({ content }) => {
   const images = content?.media[0]?.images || [];
 
   return (
-    <div className="w-[500px] bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-3">
@@ -362,7 +362,7 @@ const TwitterVideoPreview = ({ content }) => {
   };
 
   return (
-    <div className="w-[500px] bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-3">

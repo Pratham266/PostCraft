@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../components/ui/button';
 import PostResults from '../components/PostResults';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -7,6 +7,7 @@ import { postsAPI } from '../lib/api/posts';
 import platforms from '../utils/static/platforms.jsx';
 import categories from '../utils/static/category.js';
 import { io } from 'socket.io-client';
+import { saveToLibrary } from '../store/slices/librarySlice';
 
 /**
  * Adds a media object to every platform in a post variation.
@@ -37,6 +38,7 @@ const socket = io('http://localhost:3001');
 
 const Dashboard = () => {
   const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const [postIdea, setPostIdea] = useState('');
   const [postType, setPostType] = useState('image');
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
@@ -146,6 +148,12 @@ const Dashboard = () => {
 
   const handleSelectAll = () => {
     setSelectedPlatforms(platforms.map((p) => p.id));
+  };
+
+  const handleSaveToLibrary = () => {
+    const posts = generatedPosts?.variations[0]?.platforms;
+    console.log({ posts });
+    dispatch(saveToLibrary({ posts, postType }));
   };
 
   const handleDeselectAll = () => {
@@ -275,59 +283,13 @@ const Dashboard = () => {
       setError('Failed to export posts. Please try again.');
     }
   };
-  console.log({ generatedCaptions, generatedMedia, generatedPosts });
+  console.log({ generatedPosts });
 
   return (
     <>
       {isGenerating && <LoadingSpinner />}
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 10h6m-6 4h6m-6 4h4"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    PostCraft
-                  </h1>
-                  <p className="text-sm text-gray-600">
-                    AI-Powered Social Media Content Creation
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">
-                    {user?.name}
-                  </p>
-                  <p className="text-xs text-gray-500">{user?.email}</p>
-                </div>
-                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-purple-600">
-                    {user?.name?.charAt(0)?.toUpperCase()}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div className="max-w-7xl mx-auto px-6 py-8">
           {!generatedPosts ? (
             /* Input Form */
@@ -611,6 +573,7 @@ const Dashboard = () => {
               onExport={handleExport}
               isLoading={isGenerating}
               postType={postType}
+              onSaveToLibrary={handleSaveToLibrary}
             />
           )}
         </div>

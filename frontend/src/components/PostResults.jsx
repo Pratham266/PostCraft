@@ -3,10 +3,12 @@ import { Button } from './ui/button';
 import {
   FacebookImagePreview,
   FacebookMultipleImagesPreview,
+  FacebookSVG,
   FacebookVideoPreview,
 } from './previews/FacebookPreviews';
 import {
   InstagramImagePreview,
+  InstagramLogoSVG,
   InstagramMultipleImagesPreview,
   InstagramVideoPreview,
 } from './previews/InstagramPreviews';
@@ -14,9 +16,11 @@ import {
   LinkedinImagePreview,
   LinkedinVideoPreview,
   LinkedinMultiPreview,
+  LinkedInLogoSVG,
 } from './previews/LinkedInPreviews';
 import {
   TwitterImagePreview,
+  TwitterLogoSVG,
   TwitterMultiImagesPreview,
   TwitterVideoPreview,
 } from './previews/TwitterPreviews';
@@ -24,7 +28,23 @@ import {
   WhatappImagePreviews,
   WhatappVideoPreviews,
   WhatappMultipleImagesPreviews,
+  WhatsAppLogoSVG,
 } from './previews/WhatappPreviews';
+
+const getPlatformSVG = (platform) => {
+  switch (platform) {
+    case 'facebook':
+      return <FacebookSVG />;
+    case 'instagram':
+      return <InstagramLogoSVG />;
+    case 'linkedin':
+      return <LinkedInLogoSVG />;
+    case 'twitter':
+      return <TwitterLogoSVG />;
+    case 'whatsapp':
+      return <WhatsAppLogoSVG />;
+  }
+};
 
 const PostResults = ({
   generatedPosts,
@@ -32,6 +52,7 @@ const PostResults = ({
   onExport,
   isLoading,
   postType,
+  onSaveToLibrary,
 }) => {
   const [selectedVariation, setSelectedVariation] = useState(0);
   const [selectedPlatform, setSelectedPlatform] = useState('facebook');
@@ -61,11 +82,11 @@ const PostResults = ({
 
   // Platform guidelines
   const platformGuidelines = {
-    facebook: { maxCaption: 63206, maxHashtags: 30, name: 'Facebook' },
-    instagram: { maxCaption: 2200, maxHashtags: 30, name: 'Instagram' },
-    linkedin: { maxCaption: 3000, maxHashtags: 15, name: 'LinkedIn' },
-    twitter: { maxCaption: 280, maxHashtags: 10, name: 'Twitter/X' },
-    whatsapp: { maxCaption: 1000, maxHashtags: 15, name: 'WhatsApp' },
+    facebook: { maxCaption: 63206, maxHashtags: 30, name: 'facebook' },
+    instagram: { maxCaption: 2200, maxHashtags: 30, name: 'instagram' },
+    linkedin: { maxCaption: 3000, maxHashtags: 15, name: 'linkedin' },
+    twitter: { maxCaption: 280, maxHashtags: 10, name: 'twitter' },
+    whatsapp: { maxCaption: 1000, maxHashtags: 15, name: 'whatsapp' },
   };
 
   console.log({ generatedPosts });
@@ -110,7 +131,7 @@ const PostResults = ({
     switch (selectedPlatform) {
       case 'facebook':
         return (
-          <div className="bg-white border border-gray-200 rounded-lg p-4 max-w-md">
+          <div className="bg-white border border-gray-200 rounded-lg max-w-sm">
             {postType === 'image' && <FacebookImagePreview content={content} />}
             {postType === 'video' && <FacebookVideoPreview content={content} />}
             {postType === 'carousel' && (
@@ -137,7 +158,7 @@ const PostResults = ({
 
       case 'linkedin':
         return (
-          <div className="bg-white border border-gray-200 rounded-lg p-4 max-w-md">
+          <div className="bg-white border border-gray-200 rounded-lg max-w-sm">
             {postType === 'image' && <LinkedinImagePreview content={content} />}
             {postType === 'video' && <LinkedinVideoPreview content={content} />}
             {postType === 'carousel' && (
@@ -148,7 +169,7 @@ const PostResults = ({
 
       case 'twitter':
         return (
-          <div className="bg-white border border-gray-200 rounded-lg p-4 max-w-md">
+          <div className="bg-white border border-gray-200 rounded-lg max-w-sm">
             {postType === 'image' && <TwitterImagePreview content={content} />}
             {postType === 'video' && <TwitterVideoPreview content={content} />}
             {postType === 'carousel' && (
@@ -159,7 +180,7 @@ const PostResults = ({
 
       case 'whatsapp':
         return (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 max-w-sm">
+          <div className="bg-white border border-gray-200 rounded-lg max-w-sm">
             {postType === 'image' && <WhatappImagePreviews content={content} />}
             {postType === 'video' && <WhatappVideoPreviews content={content} />}
             {postType === 'carousel' && (
@@ -179,6 +200,13 @@ const PostResults = ({
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Generated Posts</h2>
         <div className="flex space-x-3">
+          <Button
+            onClick={onSaveToLibrary}
+            variant="outline"
+            disabled={isLoading}
+          >
+            {isLoading ? 'saving...' : 'Save To Library'}
+          </Button>
           <Button onClick={onRegenerate} variant="outline" disabled={isLoading}>
             {isLoading ? 'Regenerating...' : 'Regenerate'}
           </Button>
@@ -189,7 +217,7 @@ const PostResults = ({
       </div>
 
       {/* Variation Tabs */}
-      <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
+      {/* <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
         {variations.map((variation, index) => (
           <button
             key={index}
@@ -203,7 +231,7 @@ const PostResults = ({
             Variation {index + 1}
           </button>
         ))}
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Panel - Editing */}
@@ -218,19 +246,10 @@ const PostResults = ({
                     key={platform}
                     onClick={() => setSelectedPlatform(platform)}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedPlatform === platform
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      selectedPlatform === platform ? 'bg-blue-100 ' : ''
                     }`}
                   >
-                    <span className="text-lg">
-                      {platform === 'facebook' && '📘'}
-                      {platform === 'instagram' && '📷'}
-                      {platform === 'linkedin' && '💼'}
-                      {platform === 'twitter' && '🐦'}
-                      {platform === 'whatsapp' && '💬'}
-                    </span>
-                    <span>{guidelines.name}</span>
+                    {getPlatformSVG(guidelines.name)}
                   </button>
                 )
               )}
@@ -345,19 +364,6 @@ const PostResults = ({
         {/* Right Panel - Preview */}
         <div className="space-y-6">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <div className="flex items-center space-x-2 mb-4">
-              <span className="text-lg">
-                {selectedPlatform === 'facebook' && '📘'}
-                {selectedPlatform === 'instagram' && '📷'}
-                {selectedPlatform === 'linkedin' && '💼'}
-                {selectedPlatform === 'twitter' && '🐦'}
-                {selectedPlatform === 'whatsapp' && '💬'}
-              </span>
-              <h3 className="text-lg font-semibold">
-                {platformGuidelines[selectedPlatform].name} Preview
-              </h3>
-            </div>
-
             <div className="flex justify-center">{renderPlatformPreview()}</div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const InstagramLogoSVG = () => (
+export const InstagramLogoSVG = () => (
   <svg
     width="48"
     height="48"

@@ -23,14 +23,38 @@ const Layout = ({ children }) => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="text-xl font-bold text-gray-800">
-              PostCraft
+              <div className="flex items-center space-x-4">
+                <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 10h6m-6 4h6m-6 4h4"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    PostCraft
+                  </h1>
+                  <p className="text-sm text-gray-600">
+                    AI-Powered Social Media Content Creation
+                  </p>
+                </div>
+              </div>
             </Link>
             <div className="flex items-center space-x-4">
               <Link
                 to="/"
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive('/') 
-                    ? 'bg-blue-100 text-blue-700' 
+                  isActive('/')
+                    ? 'bg-blue-100 text-blue-700'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -39,24 +63,34 @@ const Layout = ({ children }) => {
               <Link
                 to="/dashboard"
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive('/dashboard') 
-                    ? 'bg-blue-100 text-blue-700' 
+                  isActive('/dashboard')
+                    ? 'bg-blue-100 text-blue-700'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 Dashboard
               </Link>
               <Link
+                to="/library"
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  isActive('/library')
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Library
+              </Link>
+              <Link
                 to="/about"
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive('/about') 
-                    ? 'bg-blue-100 text-blue-700' 
+                  isActive('/about')
+                    ? 'bg-blue-100 text-blue-700'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 About
               </Link>
-              
+
               {isAuthenticated ? (
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">

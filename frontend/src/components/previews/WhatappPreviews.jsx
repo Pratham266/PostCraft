@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-const WhatsAppLogoSVG = () => (
+export const WhatsAppLogoSVG = () => (
   <svg
     width="48"
     height="48"
@@ -176,7 +176,7 @@ const SignalSVG = () => (
 const WhatappImagePreviews = ({ content }) => {
   const images = content?.media[0]?.images || [];
   return (
-    <div className="w-[375px] bg-[#0B141A] text-white overflow-hidden rounded-lg">
+    <div className="w-[370px] bg-[#0B141A] text-white overflow-hidden rounded-lg  border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Status Bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-[#0B141A]">
         <div className="text-white text-sm font-medium">8:46</div>
@@ -274,7 +274,7 @@ const WhatappVideoPreviews = ({ content }) => {
   };
 
   return (
-    <div className="w-[375px] bg-[#0B141A] text-white overflow-hidden rounded-lg">
+    <div className="w-[370px] bg-[#0B141A] text-white overflow-hidden rounded-lg  border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Status Bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-[#0B141A]">
         <div className="text-white text-sm font-medium">8:46</div>
@@ -410,7 +410,7 @@ const WhatappMultipleImagesPreviews = ({ content }) => {
   const images = content?.media[0]?.images || [];
   const mediaListLength = content?.media[0]?.images?.length || 2;
   return (
-    <div className="w-[375px] bg-[#0B141A] text-white overflow-hidden rounded-lg">
+    <div className="w-[370px] bg-[#0B141A] text-white overflow-hidden rounded-lg  border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Status Bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-[#0B141A]">
         <div className="text-white text-sm font-medium">8:46</div>

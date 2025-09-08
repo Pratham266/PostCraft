@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-const LinkedInLogoSVG = () => (
+export const LinkedInLogoSVG = () => (
   <svg
     width="48"
     height="48"
@@ -174,7 +174,7 @@ const PauseButtonSVG = () => (
 const LinkedinImagePreview = ({ content }) => {
   const images = content?.media[0]?.images || [];
   return (
-    <div className="w-[552px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-3">
@@ -249,7 +249,7 @@ const LinkedinMultiPreview = ({ content }) => {
   const mediaListLength = content?.media[0]?.images?.length || 5;
   const images = content?.media[0]?.images || [];
   return (
-    <div className="w-[552px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-3">
@@ -419,7 +419,7 @@ const LinkedinVideoPreview = ({ content }) => {
   };
 
   return (
-    <div className="w-[552px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <div className="w-[370px] bg-white border border-gray-300  shadow-sm text-[15px] font-sans overflow-hidden rounded-lg">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-3">
